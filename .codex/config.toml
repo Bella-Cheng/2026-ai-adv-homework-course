@@ -1,0 +1,14 @@
+# 專案權限設定
+
+approval_policy = "on-request"   # AI 判斷安全就直接做，不確定才問
+sandbox_mode = "workspace-write" # 可讀寫專案內檔案
+allow_login_shell = false       # 禁止高權限 shell
+
+[sandbox_workspace_write]
+network_access = false          # 禁止連網
+
+# 額外允許可寫資料夾（依系統自行調整）
+writable_roots = [
+  "~/.npm",
+  "~/Library/pnpm"
+]
