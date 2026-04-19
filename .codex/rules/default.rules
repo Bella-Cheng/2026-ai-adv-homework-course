@@ -1,0 +1,34 @@
+# 禁止危險刪除
+prefix_rule(
+  pattern = ["rm", "-rf"],
+  decision = "forbidden",
+  justification = "禁止強制刪除"
+)
+
+# 禁止 sudo
+prefix_rule(
+  pattern = ["sudo"],
+  decision = "forbidden",
+  justification = "禁止系統權限操作"
+)
+
+# 禁止推送遠端
+prefix_rule(
+  pattern = ["git", "push"],
+  decision = "forbidden",
+  justification = "避免自動推送"
+)
+
+# 禁止重置
+prefix_rule(
+  pattern = ["git", "reset", "--hard"],
+  decision = "forbidden",
+  justification = "避免資料遺失"
+)
+
+# commit 需確認
+prefix_rule(
+  pattern = ["git", "commit"],
+  decision = "prompt",
+  justification = "提交前需確認"
+)
