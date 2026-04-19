@@ -6,7 +6,6 @@
   </div>
 
   <div v-else class="flex flex-col lg:flex-row gap-8">
-    <!-- Left: Form -->
     <div class="lg:w-3/5">
       <div class="bg-white rounded-2xl shadow-sm p-6">
         <h2 class="font-medium text-text-primary mb-4">收件資訊</h2>
@@ -48,7 +47,6 @@
       </div>
     </div>
 
-    <!-- Right: Summary -->
     <div class="lg:w-2/5">
       <div class="bg-white rounded-2xl shadow-sm p-6 sticky top-24">
         <h2 class="font-medium text-text-primary mb-4">訂單摘要</h2>
@@ -58,28 +56,16 @@
             <span class="text-text-primary">NT$ {{ (item.product.price * item.quantity).toLocaleString() }}</span>
           </div>
         </div>
-        <div class="border-t border-gray-100 pt-3 space-y-2 text-sm">
-          <div class="flex justify-between">
-            <span class="text-text-secondary">商品小計</span>
-            <span>NT$ {{ cartTotal.toLocaleString() }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-text-secondary">運費</span>
-            <span>{{ cartTotal >= 500 ? '免運' : 'NT$ 150' }}</span>
-          </div>
-        </div>
-        <div class="border-t border-gray-100 pt-3 mt-3 flex justify-between items-center">
+        <div class="border-t border-gray-100 pt-3 flex justify-between items-center">
           <span class="font-bold text-text-primary">總計</span>
-          <span class="font-bold text-xl text-rose-primary">
-            NT$ {{ (cartTotal + (cartTotal >= 500 ? 0 : 150)).toLocaleString() }}
-          </span>
+          <span class="font-bold text-xl text-rose-primary">NT$ {{ cartTotal.toLocaleString() }}</span>
         </div>
         <button
           @click="submitOrder"
           :disabled="submitting"
           class="w-full mt-4 bg-rose-primary text-white py-3 rounded-full text-sm font-medium hover:bg-rose-dark transition-colors disabled:opacity-50"
         >
-          {{ submitting ? '處理中...' : '確認送出訂單' }}
+          {{ submitting ? '處理中...' : '前往綠界付款' }}
         </button>
       </div>
     </div>

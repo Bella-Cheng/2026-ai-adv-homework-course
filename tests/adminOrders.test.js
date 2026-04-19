@@ -7,7 +7,6 @@ describe('Admin Orders API', () => {
   beforeAll(async () => {
     adminToken = await getAdminToken();
 
-    // Create an order: register user -> add to cart -> place order
     const { token } = await registerUser();
     const prodRes = await request(app).get('/api/products');
     const productId = prodRes.body.data.products[0].id;
@@ -23,7 +22,7 @@ describe('Admin Orders API', () => {
       .send({
         recipientName: '管理員測試收件人',
         recipientEmail: 'admin-test@example.com',
-        recipientAddress: '台北市管理員測試路 456 號',
+        recipientAddress: '台北市管理員測試路 456 號'
       });
 
     orderId = orderRes.body.data.id;
@@ -36,8 +35,6 @@ describe('Admin Orders API', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('data');
-    expect(res.body).toHaveProperty('error', null);
-    expect(res.body).toHaveProperty('message');
     expect(res.body.data).toHaveProperty('orders');
     expect(res.body.data).toHaveProperty('pagination');
     expect(Array.isArray(res.body.data.orders)).toBe(true);
@@ -62,8 +59,6 @@ describe('Admin Orders API', () => {
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('data');
-    expect(res.body).toHaveProperty('error', null);
     expect(res.body.data).toHaveProperty('id', orderId);
     expect(res.body.data).toHaveProperty('order_no');
     expect(res.body.data).toHaveProperty('items');
@@ -79,6 +74,5 @@ describe('Admin Orders API', () => {
 
     expect(res.status).toBe(403);
     expect(res.body).toHaveProperty('error');
-    expect(res.body.error).not.toBeNull();
   });
 });

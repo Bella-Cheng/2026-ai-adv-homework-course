@@ -2,6 +2,7 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../database');
 const authMiddleware = require('../middleware/authMiddleware');
+const { buildCheckoutParams, generateMerchantTradeNo } = require('../services/ecpay');
 
 const router = express.Router();
 
@@ -12,6 +13,17 @@ function generateOrderNo() {
   const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
   const random = uuidv4().slice(0, 5).toUpperCase();
   return `ORD-${dateStr}-${random}`;
+}
+
+function getOrderItems(orderId) {
+  return db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(orderId);
+}
+
+function serializeOrder(order) {
+  return {
+    ...order,
+    items: getOrderItems(order.id)
+  };
 }
 
 /**
@@ -133,13 +145,28 @@ router.post('/', (req, res) => {
 
   const orderId = uuidv4();
   const orderNo = generateOrderNo();
+  const merchantTradeNo = generateMerchantTradeNo();
 
   // Transaction: create order, order items, deduct stock, clear cart
   const createOrder = db.transaction(() => {
     db.prepare(
-      `INSERT INTO orders (id, order_no, user_id, recipient_name, recipient_email, recipient_address, total_amount)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`
-    ).run(orderId, orderNo, userId, recipientName, recipientEmail, recipientAddress, totalAmount);
+      `INSERT INTO orders (
+        id, order_no, user_id, recipient_name, recipient_email, recipient_address, total_amount,
+        payment_provider, payment_status, merchant_trade_no
+      )
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(
+      orderId,
+      orderNo,
+      userId,
+      recipientName,
+      recipientEmail,
+      recipientAddress,
+      totalAmount,
+      'ecpay',
+      'pending',
+      merchantTradeNo
+    );
 
     const insertItem = db.prepare(
       `INSERT INTO order_items (id, order_id, product_id, product_name, product_price, quantity)
@@ -162,6 +189,7 @@ router.post('/', (req, res) => {
   const orderItems = db.prepare(
     'SELECT product_name, product_price, quantity FROM order_items WHERE order_id = ?'
   ).all(orderId);
+  const payment = buildCheckoutParams(order, getOrderItems(orderId));
 
   res.status(201).json({
     data: {
@@ -169,8 +197,11 @@ router.post('/', (req, res) => {
       order_no: order.order_no,
       total_amount: order.total_amount,
       status: order.status,
+      payment_status: order.payment_status,
+      merchant_trade_no: order.merchant_trade_no,
       items: orderItems,
-      created_at: order.created_at
+      created_at: order.created_at,
+      payment
     },
     error: null,
     message: '訂單建立成功'
@@ -219,7 +250,7 @@ router.post('/', (req, res) => {
  */
 router.get('/', (req, res) => {
   const orders = db.prepare(
-    'SELECT id, order_no, total_amount, status, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC'
+    'SELECT id, order_no, total_amount, status, payment_status, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC'
   ).all(req.user.userId);
 
   res.json({
@@ -300,10 +331,40 @@ router.get('/:id', (req, res) => {
     return res.status(404).json({ data: null, error: 'NOT_FOUND', message: '訂單不存在' });
   }
 
-  const items = db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(order.id);
+  res.json({
+    data: serializeOrder(order),
+    error: null,
+    message: '成功'
+  });
+});
+
+router.post('/:id/ecpay-checkout', (req, res) => {
+  const order = db.prepare('SELECT * FROM orders WHERE id = ? AND user_id = ?').get(req.params.id, req.user.userId);
+
+  if (!order) {
+    return res.status(404).json({ data: null, error: 'NOT_FOUND', message: '訂單不存在' });
+  }
+
+  if (order.status !== 'pending' || order.payment_status === 'paid') {
+    return res.status(400).json({
+      data: null,
+      error: 'INVALID_STATUS',
+      message: '只有尚未付款完成的訂單可以建立綠界付款請求'
+    });
+  }
+
+  if (!order.merchant_trade_no) {
+    const merchantTradeNo = generateMerchantTradeNo();
+    db.prepare('UPDATE orders SET merchant_trade_no = ? WHERE id = ?').run(merchantTradeNo, order.id);
+    order.merchant_trade_no = merchantTradeNo;
+  }
 
   res.json({
-    data: { ...order, items },
+    data: {
+      id: order.id,
+      order_no: order.order_no,
+      payment: buildCheckoutParams(order, getOrderItems(order.id))
+    },
     error: null,
     message: '成功'
   });
@@ -406,10 +467,9 @@ router.patch('/:id/pay', (req, res) => {
   db.prepare('UPDATE orders SET status = ? WHERE id = ?').run(newStatus, order.id);
 
   const updated = db.prepare('SELECT * FROM orders WHERE id = ?').get(order.id);
-  const items = db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(order.id);
 
   res.json({
-    data: { ...updated, items },
+    data: serializeOrder(updated),
     error: null,
     message: action === 'success' ? '付款成功' : '付款失敗'
   });

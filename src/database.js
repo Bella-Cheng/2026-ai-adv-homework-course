@@ -10,6 +10,32 @@ const db = new Database(dbPath);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
+function hasColumn(tableName, columnName) {
+  const columns = db.prepare('PRAGMA table_info(' + tableName + ')').all();
+  return columns.some(function (column) {
+    return column.name === columnName;
+  });
+}
+
+function addColumnIfMissing(tableName, columnName, definition) {
+  if (!hasColumn(tableName, columnName)) {
+    db.exec('ALTER TABLE ' + tableName + ' ADD COLUMN ' + columnName + ' ' + definition);
+  }
+}
+
+function migrateSchema() {
+  addColumnIfMissing('orders', 'shipping_fee', 'INTEGER NOT NULL DEFAULT 0');
+  addColumnIfMissing('orders', 'payment_provider', "TEXT NOT NULL DEFAULT 'ecpay'");
+  addColumnIfMissing('orders', 'payment_status', "TEXT NOT NULL DEFAULT 'pending'");
+  addColumnIfMissing('orders', 'payment_method', 'TEXT');
+  addColumnIfMissing('orders', 'merchant_trade_no', 'TEXT');
+  addColumnIfMissing('orders', 'ecpay_trade_no', 'TEXT');
+  addColumnIfMissing('orders', 'payment_at', 'TEXT');
+  addColumnIfMissing('orders', 'payment_raw_payload', 'TEXT');
+
+  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_merchant_trade_no ON orders(merchant_trade_no)');
+}
+
 function initializeDatabase() {
   // Create tables
   db.exec(`
@@ -51,7 +77,15 @@ function initializeDatabase() {
       recipient_email TEXT NOT NULL,
       recipient_address TEXT NOT NULL,
       total_amount INTEGER NOT NULL,
+      shipping_fee INTEGER NOT NULL DEFAULT 0,
       status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'paid', 'failed')),
+      payment_provider TEXT NOT NULL DEFAULT 'ecpay',
+      payment_status TEXT NOT NULL DEFAULT 'pending',
+      payment_method TEXT,
+      merchant_trade_no TEXT UNIQUE,
+      ecpay_trade_no TEXT,
+      payment_at TEXT,
+      payment_raw_payload TEXT,
 
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       FOREIGN KEY (user_id) REFERENCES users(id)
@@ -67,6 +101,8 @@ function initializeDatabase() {
       FOREIGN KEY (order_id) REFERENCES orders(id)
     );
   `);
+
+  migrateSchema();
 
   // Seed data
   seedAdminUser();

@@ -16,6 +16,24 @@ createApp({
       }, 0);
     });
 
+    function submitEcpayForm(payment) {
+      const formEl = document.createElement('form');
+      formEl.method = payment.method || 'POST';
+      formEl.action = payment.action;
+      formEl.style.display = 'none';
+
+      Object.keys(payment.fields).forEach(function (key) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = payment.fields[key];
+        formEl.appendChild(input);
+      });
+
+      document.body.appendChild(formEl);
+      formEl.submit();
+    }
+
     function validate() {
       errors.value = {};
       if (!form.value.recipientName.trim()) errors.value.recipientName = '請輸入收件人姓名';
@@ -31,13 +49,14 @@ createApp({
     async function submitOrder() {
       if (!validate() || submitting.value) return;
       submitting.value = true;
+
       try {
         const res = await apiFetch('/api/orders', {
           method: 'POST',
           body: JSON.stringify(form.value)
         });
-        Notification.show('訂單已建立', 'success');
-        window.location.href = '/orders/' + res.data.id;
+        Notification.show('訂單建立成功，正在前往綠界付款', 'success');
+        submitEcpayForm(res.data.payment);
       } catch (err) {
         Notification.show(err?.data?.message || '訂單建立失敗', 'error');
       } finally {
@@ -53,7 +72,7 @@ createApp({
           window.location.href = '/cart';
           return;
         }
-      } catch (e) {
+      } catch (err) {
         window.location.href = '/cart';
         return;
       }

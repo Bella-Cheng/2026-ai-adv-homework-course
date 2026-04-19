@@ -65,6 +65,37 @@ ECPAY_MERCHANT_ID=3002607
 ECPAY_HASH_KEY=pwFHCqoQZGmho4w6
 ECPAY_HASH_IV=EkRm7iFT261dpevs
 ECPAY_ENV=staging
+ECPAY_CALLBACK_BASE_URL=https://your-public-callback-host.example.com
+ECPAY_CLIENT_BACK_BASE_URL=http://localhost:3001
+```
+
+`ECPAY_CALLBACK_BASE_URL` 需要填可被綠界回呼的公開 HTTPS 網址；本機頁面網址可另外用 `ECPAY_CLIENT_BACK_BASE_URL` 指向前端頁面。
+
+### 2-1. 本機串接綠界回呼
+
+若要測試綠界 `ReturnURL`，請先準備一個可被綠界連線的公開 HTTPS 網址，並讓它轉送或部署到你的後端服務，例如：
+
+```text
+https://your-public-callback-host.example.com
+```
+
+請將 `.env` 更新為：
+
+```env
+ECPAY_CALLBACK_BASE_URL=https://your-public-callback-host.example.com
+ECPAY_CLIENT_BACK_BASE_URL=http://localhost:3001
+```
+
+設定完成後，綠界會將付款結果 POST 到：
+
+```text
+https://your-public-callback-host.example.com/api/payments/ecpay/return
+```
+
+而使用者付款完成後會被導回：
+
+```text
+http://localhost:3001/payments/ecpay/result
 ```
 
 ### 3. 啟動專案

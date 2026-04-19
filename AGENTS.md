@@ -21,7 +21,7 @@
 ## 文件閱讀指引
 不需要每次都讀完整個專案，請先依任務類型選擇最小必要文件：
 
-- 所有程式修改都先讀 `DEVELOPMENT.md`，確認程式風格、命名、繁體中文用語與錯誤處理規範。
+- 所有程式修改都先讀 `docs/DEVELOPMENT.md`，確認程式風格、命名、繁體中文用語與錯誤處理規範。
 - 新增功能前先讀 `docs/FEATURES.md`，確認是否已有相同或相近功能，避免重複開發。
 - 需要理解整體模組責任、前後端串接或資料流時，讀 `docs/ARCHITECTURE.md`。
 - 調整頁面或 API 路由時，讀 `docs/ROUTES.md`。
@@ -29,7 +29,7 @@
 
 建議的最小組合如下：
 
-- 小型前端或文案調整：`DEVELOPMENT.md` + `docs/FEATURES.md`
-- 新增或修改 API：`DEVELOPMENT.md` + `docs/ROUTES.md` + `docs/FEATURES.md`
-- 跨模組功能調整：`DEVELOPMENT.md` + `docs/ARCHITECTURE.md` + `docs/FEATURES.md`
-- 涉及資料庫或訂單流程：`DEVELOPMENT.md` + `docs/DATA_MODEL.md` + `docs/ARCHITECTURE.md`
+- 小型前端或文案調整：`docs/DEVELOPMENT.md` + `docs/FEATURES.md`
+- 新增或修改 API：`docs/DEVELOPMENT.md` + `docs/ROUTES.md` + `docs/FEATURES.md`
+- 跨模組功能調整：`docs/DEVELOPMENT.md` + `docs/ARCHITECTURE.md` + `docs/FEATURES.md`
+- 涉及資料庫或訂單流程：`docs/DEVELOPMENT.md` + `docs/DATA_MODEL.md` + `docs/ARCHITECTURE.md`
