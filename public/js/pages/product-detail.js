@@ -8,6 +8,9 @@ createApp({
     const notFound = ref(false);
     const quantity = ref(1);
     const adding = ref(false);
+    const fallbackImage = '/images/hero-yellow-flowers.jpg';
+    const productCopy = '精選當季花材搭配清爽葉材，適合生日、紀念日或任何想表達心意的場合，呈現花束的透氣層次與柔霧日光感。';
+    const productSubtitle = 'Seasonal Floral Gift';
 
     function decrease() {
       if (quantity.value > 1) quantity.value--;
@@ -18,7 +21,7 @@ createApp({
     }
 
     async function addToCart() {
-      if (!product.value || adding.value) return;
+      if (!product.value || adding.value) return false;
       adding.value = true;
       try {
         await apiFetch('/api/cart', {
@@ -32,11 +35,24 @@ createApp({
           badge.textContent = count;
           badge.style.display = 'flex';
         }
+        return true;
       } catch (e) {
         Notification.show('加入購物車失敗', 'error');
+        return false;
       } finally {
         adding.value = false;
       }
+    }
+
+    async function buyNow() {
+      const added = await addToCart();
+      if (added) {
+        window.location.href = '/checkout';
+      }
+    }
+
+    function imageFor(item) {
+      return item && item.image_url ? item.image_url : fallbackImage;
     }
 
     onMounted(async function () {
@@ -50,6 +66,19 @@ createApp({
       }
     });
 
-    return { product, loading, notFound, quantity, adding, decrease, increase, addToCart };
+    return {
+      product,
+      loading,
+      notFound,
+      quantity,
+      adding,
+      productCopy,
+      productSubtitle,
+      decrease,
+      increase,
+      addToCart,
+      buyNow,
+      imageFor
+    };
   }
 }).mount('#app');
