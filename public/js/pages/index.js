@@ -1,23 +1,46 @@
-const { createApp, ref, onMounted } = Vue;
+const { createApp, ref, computed, onMounted } = Vue;
 
 createApp({
   setup() {
     const products = ref([]);
-    const pagination = ref({ total: 0, page: 1, limit: 9, totalPages: 0 });
+    const pagination = ref({ total: 0, page: 1, limit: 8, totalPages: 0 });
     const loading = ref(true);
 
-    const featuredImages = [
-      'https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=400',
-      'https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=400',
-      'https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=400',
-      'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400',
+    const fallbackImages = [
+      'https://images.unsplash.com/photo-1565279445322-30ab5314ff94?w=900',
+      'https://images.unsplash.com/photo-1555596112-ca9a1e964e13?w=900',
+      'https://images.unsplash.com/photo-1543409777-30250849aa3e?w=900',
+      'https://images.unsplash.com/photo-1610467618849-66d363f5aa16?w=900',
     ];
+
+    const heroImage = computed(function () {
+      return imageFor(products.value[0], 0, 1200);
+    });
+
+    const featuredProduct = computed(function () {
+      return products.value[0] || null;
+    });
+
+    const categoryProducts = computed(function () {
+      return products.value.slice(0, 4);
+    });
+
+    const nextSeasonProducts = computed(function () {
+      return products.value.slice(4, 8);
+    });
+
+    function imageFor(product, index, width) {
+      if (product && product.image_url) {
+        return product.image_url.replace(/w=\d+/, 'w=' + width);
+      }
+      return fallbackImages[index % fallbackImages.length].replace(/w=\d+/, 'w=' + width);
+    }
 
     async function loadProducts(page) {
       page = page || 1;
       loading.value = true;
       try {
-        const res = await apiFetch('/api/products?page=' + page + '&limit=9');
+        const res = await apiFetch('/api/products?page=' + page + '&limit=8');
         products.value = res.data.products.map(function (p) {
           p._adding = false;
           return p;
@@ -35,7 +58,7 @@ createApp({
     }
 
     async function addToCart(product) {
-      if (product._adding) return;
+      if (!product || product._adding) return;
       product._adding = true;
       try {
         await apiFetch('/api/cart', {
@@ -43,10 +66,9 @@ createApp({
           body: JSON.stringify({ productId: product.id, quantity: 1 })
         });
         Notification.show('已加入購物車', 'success');
-        // Update cart badge
-        var badge = document.getElementById('cart-badge');
+        const badge = document.getElementById('cart-badge');
         if (badge) {
-          var count = parseInt(badge.textContent || '0') + 1;
+          const count = parseInt(badge.textContent || '0', 10) + 1;
           badge.textContent = count;
           badge.style.display = 'flex';
         }
@@ -62,8 +84,17 @@ createApp({
     });
 
     return {
-      products, pagination, loading, featuredImages,
-      loadProducts, goToProduct, addToCart
+      products,
+      pagination,
+      loading,
+      heroImage,
+      featuredProduct,
+      categoryProducts,
+      nextSeasonProducts,
+      loadProducts,
+      goToProduct,
+      addToCart,
+      imageFor
     };
   }
 }).mount('#app');

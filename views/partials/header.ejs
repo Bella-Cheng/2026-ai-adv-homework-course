@@ -1,26 +1,43 @@
-<header class="sticky top-0 z-50 bg-white shadow-sm border-b border-rose-bg">
-  <div class="max-w-7xl mx-auto flex items-center justify-between px-4 h-16">
-    <a href="/" class="text-xl font-bold text-rose-primary" style="font-family: 'Noto Serif TC', serif;">
-      花漾生活
-    </a>
-
-    <nav class="flex items-center gap-6 text-sm text-text-secondary">
-      <a href="http://localhost:3001/#products" class="hover:text-rose-primary transition-colors">商品列表</a>
-      <a href="/cart" class="hover:text-rose-primary transition-colors relative">
-        購物車
-        <span
-          id="cart-badge"
-          class="absolute -top-2 -right-4 bg-rose-primary text-white text-xs rounded-full w-5 h-5 items-center justify-center"
-          style="display: none;"
-        ></span>
+<header class="sticky top-0 z-50">
+  <div class="h-9 bg-bloom-deep text-bloom-ivory">
+    <div class="mx-auto flex h-full max-w-[1440px] items-center justify-between px-6 text-[12px] tracking-wide md:px-16">
+      <p>Flower Life 花漾生活    |    當季鮮花・花禮盒・訂閱配送</p>
+      <p class="hidden text-bloom-brass sm:block">本季熱賣：粉色玫瑰花束</p>
+    </div>
+  </div>
+  <div class="h-[74px] border-b border-bloom-line bg-bloom-ivory text-bloom-ink shadow-[0_8px_24px_rgba(13,33,28,0.08)]">
+    <div class="mx-auto flex h-full max-w-[1440px] items-center px-6 md:px-16">
+      <a href="/" class="mr-10 shrink-0">
+        <span class="font-serif-tc block text-[24px] font-semibold leading-none text-bloom-green">花漾生活</span>
+        <span class="mt-2 block text-[11px] uppercase tracking-[0.24em] text-bloom-muted">Flower Life</span>
       </a>
-      <a id="orders-link" href="/orders" class="hover:text-rose-primary transition-colors" style="display: none;">
-        我的訂單
-      </a>
-    </nav>
 
-    <div id="auth-nav" class="flex items-center gap-4 text-sm">
-      <a href="/login" class="bg-rose-primary text-white px-4 py-1.5 rounded-full hover:bg-rose-dark transition-colors">登入</a>
+      <nav class="hidden flex-1 items-center justify-center gap-12 text-sm text-bloom-ink lg:flex xl:gap-14">
+        <a href="/" class="whitespace-nowrap transition-colors hover:text-bloom-brass">首頁</a>
+        <a href="/#products" class="whitespace-nowrap transition-colors hover:text-bloom-brass">所有花藝商品</a>
+        <a href="/#featured" class="whitespace-nowrap transition-colors hover:text-bloom-brass">本季熱賣</a>
+        <a href="/#next-season" class="whitespace-nowrap transition-colors hover:text-bloom-brass">下季預購</a>
+        <a id="orders-link" href="/orders" class="whitespace-nowrap transition-colors hover:text-bloom-brass" style="display: none;">訂單</a>
+      </nav>
+
+      <div class="ml-12 flex shrink-0 items-center gap-7 text-sm font-semibold text-bloom-green">
+        <a href="/cart" class="relative whitespace-nowrap transition-colors hover:text-bloom-brass">
+          購物車
+          <span
+            id="cart-badge"
+            class="absolute -right-4 -top-2 hidden h-5 w-5 items-center justify-center rounded-full bg-bloom-brass text-[11px] font-semibold text-bloom-deep"
+            style="display: none;"
+          ></span>
+        </a>
+        <div id="auth-nav" class="flex items-center gap-4"></div>
+        <a href="/#notice" class="flex items-center gap-2 whitespace-nowrap text-bloom-green transition-colors hover:text-bloom-brass" aria-label="通知">
+          <span>通知</span>
+          <svg class="h-[18px] w-[18px] text-bloom-green" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M18 8.6C18 5.5 15.7 3 12 3C8.3 3 6 5.5 6 8.6C6 13.9 4 15.2 4 17H20C20 15.2 18 13.9 18 8.6Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M9.6 19C10.1 20.2 11 21 12 21C13 21 13.9 20.2 14.4 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
     </div>
   </div>
 </header>

@@ -1,6 +1,17 @@
 @import "tailwindcss";
 
 @theme {
+  --color-bloom-cream: #F4F1E8;
+  --color-bloom-ivory: #FFFDF7;
+  --color-bloom-green: #153A30;
+  --color-bloom-deep: #0D211C;
+  --color-bloom-sage: #9AA99B;
+  --color-bloom-brass: #C8A765;
+  --color-bloom-blush: #D9B9AE;
+  --color-bloom-ink: #1E211E;
+  --color-bloom-muted: #6C6E66;
+  --color-bloom-line: #D8D0C0;
+  --color-bloom-photo: #EAE4D9;
   --color-rose-primary: #C4727F;
   --color-rose-dark: #A85B67;
   --color-rose-light: #E8A5AE;
@@ -16,6 +27,10 @@
 
 body {
   font-family: 'Noto Sans TC', sans-serif;
-  background-color: var(--color-cream);
-  color: var(--color-text-primary);
+  background-color: var(--color-bloom-cream);
+  color: var(--color-bloom-ink);
+}
+
+.font-serif-tc {
+  font-family: 'Noto Serif TC', serif;
 }
