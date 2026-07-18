@@ -1,84 +1,168 @@
 <div id="app" data-order-id="<%= orderId %>" data-payment-result="<%= paymentResult %>">
-  <h1 class="text-2xl font-bold text-text-primary mb-6" style="font-family: 'Noto Serif TC', serif;">訂單詳情</h1>
-
-  <div v-if="loading" class="flex justify-center py-12">
-    <div class="w-8 h-8 border-4 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
-  </div>
-
-  <template v-else-if="order">
-    <div
-      v-if="paymentResult && paymentMessages[paymentResult]"
-      class="rounded-xl p-4 mb-6 text-sm"
-      :class="paymentMessages[paymentResult].cls"
-    >
-      {{ paymentMessages[paymentResult].text }}
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-      <div class="flex items-start justify-between">
-        <div>
-          <p class="text-sm text-text-secondary">訂單編號：{{ order.order_no }}</p>
-          <p class="text-xs text-text-muted mt-1">建立時間：{{ new Date(order.created_at).toLocaleString('zh-TW') }}</p>
-        </div>
-        <span
-          class="text-xs px-3 py-1 rounded-full font-medium"
-          :class="statusMap[order.status]?.cls || 'bg-gray-100 text-gray-600'"
-        >
-          {{ statusMap[order.status]?.label || order.status }}
-        </span>
+  <section class="mx-auto max-w-[1440px] px-6 py-12 md:px-24">
+    <div class="grid gap-8 lg:grid-cols-[1fr_388px] lg:items-start">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.28em] text-bloom-brass">Order Detail</p>
+        <h1 class="font-serif-tc mt-4 text-[34px] font-bold leading-[44px] text-bloom-green">訂單詳情</h1>
+        <p class="mt-4 max-w-[620px] text-[15px] leading-6 text-bloom-muted">
+          查看花禮訂單資訊、收件資料、付款狀態與商品明細。
+        </p>
       </div>
-      <div class="mt-4 text-sm text-text-secondary space-y-1">
-        <p>付款狀態：{{ order.payment_status || order.status }}</p>
-        <p v-if="order.payment_method">付款方式：{{ order.payment_method }}</p>
-        <p v-if="order.payment_at">付款時間：{{ order.payment_at }}</p>
-      </div>
-    </div>
 
-    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-      <h2 class="font-medium text-text-primary mb-3">收件資訊</h2>
-      <div class="text-sm space-y-2 text-text-secondary">
-        <p>收件人：{{ order.recipient_name }}</p>
-        <p>Email：{{ order.recipient_email }}</p>
-        <p>地址：{{ order.recipient_address }}</p>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-      <h2 class="font-medium text-text-primary mb-3">訂單商品</h2>
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-gray-100 text-text-muted">
-            <th class="text-left py-2 font-normal">商品名稱</th>
-            <th class="text-right py-2 font-normal">單價</th>
-            <th class="text-right py-2 font-normal">數量</th>
-            <th class="text-right py-2 font-normal">小計</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in order.items" :key="item.id" class="border-b border-gray-50">
-            <td class="py-3 text-text-primary">{{ item.product_name }}</td>
-            <td class="py-3 text-right text-text-secondary">NT$ {{ item.product_price.toLocaleString() }}</td>
-            <td class="py-3 text-right text-text-secondary">{{ item.quantity }}</td>
-            <td class="py-3 text-right text-text-primary font-medium">NT$ {{ (item.product_price * item.quantity).toLocaleString() }}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3" class="pt-3 text-right font-bold text-text-primary">總計</td>
-            <td class="pt-3 text-right font-bold text-rose-primary text-lg">NT$ {{ order.total_amount.toLocaleString() }}</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-
-    <div v-if="order.status === 'pending'" class="flex gap-4">
-      <button
-        @click="handlePayNow"
-        :disabled="paying"
-        class="bg-rose-primary text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-rose-dark transition-colors disabled:opacity-50"
+      <a
+        href="/orders"
+        class="inline-flex h-11 items-center justify-center rounded-lg border border-bloom-line bg-bloom-ivory px-7 text-sm font-semibold text-bloom-green shadow-[0_12px_26px_rgba(13,33,28,0.06)] transition-colors hover:text-bloom-brass lg:justify-self-end"
       >
-        {{ paying ? '處理中...' : '前往綠界付款' }}
-      </button>
+        返回我的訂單
+      </a>
     </div>
-  </template>
+
+    <div v-if="loading" class="flex justify-center py-16">
+      <div class="h-8 w-8 animate-spin rounded-full border-4 border-bloom-brass border-t-transparent"></div>
+    </div>
+
+    <template v-else-if="order">
+      <div
+        v-if="paymentResult && paymentMessages[paymentResult]"
+        class="mt-10 rounded-lg px-5 py-4 text-sm"
+        :class="paymentMessages[paymentResult].cls"
+      >
+        {{ paymentMessages[paymentResult].text }}
+      </div>
+
+      <div class="mt-10 grid gap-10 lg:grid-cols-[760px_440px]">
+        <div class="space-y-8">
+          <section class="rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.24em] text-bloom-brass">Order Info</p>
+                <h2 class="font-serif-tc mt-3 text-[26px] font-semibold leading-9 text-bloom-green">訂單資訊</h2>
+                <p class="mt-3 text-sm leading-6 text-bloom-muted">訂單編號：{{ order.order_no }}</p>
+                <p class="mt-1 text-xs leading-5 text-bloom-muted/80">建立時間：{{ new Date(order.created_at).toLocaleString('zh-TW') }}</p>
+              </div>
+              <span
+                class="inline-flex h-[30px] min-w-[84px] items-center justify-center rounded-full px-4 text-xs font-medium"
+                :class="statusMap[order.status]?.cls || 'bg-bloom-cream text-bloom-muted'"
+              >
+                {{ statusMap[order.status]?.label || order.status }}
+              </span>
+            </div>
+
+            <div class="mt-7 grid gap-4 border-t border-bloom-line pt-6 sm:grid-cols-3">
+              <div>
+                <p class="text-xs font-medium text-bloom-muted">付款狀態</p>
+                <p class="mt-2 text-sm font-semibold text-bloom-ink">{{ paymentStatusLabel(order.payment_status || order.status) }}</p>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-bloom-muted">付款方式</p>
+                <p class="mt-2 text-sm font-semibold text-bloom-ink">{{ order.payment_method || '綠界付款' }}</p>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-bloom-muted">付款時間</p>
+                <p class="mt-2 text-sm font-semibold text-bloom-ink">{{ order.payment_at || '尚未完成付款' }}</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
+            <p class="text-xs font-semibold uppercase tracking-[0.24em] text-bloom-brass">Recipient</p>
+            <h2 class="font-serif-tc mt-3 text-[26px] font-semibold leading-9 text-bloom-green">收件資訊</h2>
+            <div class="mt-6 grid gap-4">
+              <div class="rounded-lg border border-bloom-line bg-bloom-cream px-4 py-3">
+                <p class="text-xs font-medium text-bloom-muted">收件人</p>
+                <p class="mt-2 text-sm text-bloom-ink">{{ order.recipient_name }}</p>
+              </div>
+              <div class="rounded-lg border border-bloom-line bg-bloom-cream px-4 py-3">
+                <p class="text-xs font-medium text-bloom-muted">Email</p>
+                <p class="mt-2 text-sm text-bloom-ink">{{ order.recipient_email }}</p>
+              </div>
+              <div class="rounded-lg border border-bloom-line bg-bloom-cream px-4 py-3">
+                <p class="text-xs font-medium text-bloom-muted">地址</p>
+                <p class="mt-2 text-sm text-bloom-ink">{{ order.recipient_address }}</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
+            <p class="text-xs font-semibold uppercase tracking-[0.24em] text-bloom-brass">Floral Items</p>
+            <h2 class="font-serif-tc mt-3 text-[26px] font-semibold leading-9 text-bloom-green">訂單商品</h2>
+
+            <div class="mt-7 space-y-5">
+              <article
+                v-for="item in order.items"
+                :key="item.id"
+                class="flex items-center gap-5 rounded-lg border border-bloom-line bg-bloom-ivory p-5 shadow-[0_12px_26px_rgba(13,33,28,0.06)]"
+              >
+                <img
+                  src="/images/hero-yellow-flowers.jpg"
+                  alt="花漾生活花禮商品"
+                  class="h-20 w-20 shrink-0 rounded-lg border border-bloom-line bg-bloom-photo object-cover"
+                />
+                <div class="min-w-0 flex-1">
+                  <h3 class="font-serif-tc text-lg font-semibold leading-7 text-bloom-ink">{{ item.product_name }}</h3>
+                  <p class="mt-2 text-xs leading-4 text-bloom-muted">季節花束訂單明細</p>
+                </div>
+                <div class="shrink-0 text-right">
+                  <p class="text-sm text-bloom-muted">NT$ {{ item.product_price.toLocaleString() }} x {{ item.quantity }}</p>
+                  <p class="mt-2 font-serif-tc text-xl font-semibold text-bloom-brass">
+                    NT$ {{ (item.product_price * item.quantity).toLocaleString() }}
+                  </p>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        <aside class="rounded-lg bg-bloom-green p-9 text-bloom-ivory shadow-[0_18px_34px_rgba(13,33,28,0.10),0_4px_8px_rgba(13,33,28,0.04)] lg:sticky lg:top-32">
+          <p class="text-xs font-semibold uppercase tracking-[0.24em] text-bloom-brass">Order Summary</p>
+          <h2 class="font-serif-tc mt-3 text-[28px] font-bold leading-[41px]">付款摘要</h2>
+          <p class="mt-2 text-[13px] leading-[19px] text-bloom-sage">
+            確認花禮金額與付款狀態；待付款訂單可重新前往綠界付款。
+          </p>
+
+          <div class="mt-7 h-px bg-bloom-sage/70"></div>
+
+          <div class="mt-8 space-y-5 text-sm">
+            <div class="flex justify-between gap-4">
+              <span>訂單狀態</span>
+              <span class="font-medium">{{ statusMap[order.status]?.label || order.status }}</span>
+            </div>
+            <div class="flex justify-between gap-4">
+              <span>付款狀態</span>
+              <span class="font-medium">{{ paymentStatusLabel(order.payment_status || order.status) }}</span>
+            </div>
+            <div class="flex justify-between gap-4">
+              <span>商品數量</span>
+              <span class="font-medium">{{ order.items.length }} 項</span>
+            </div>
+          </div>
+
+          <div class="mt-8 h-px bg-bloom-sage/70"></div>
+
+          <div class="mt-7 flex items-center justify-between">
+            <span class="text-lg font-bold">總計</span>
+            <span class="font-serif-tc text-[28px] font-bold leading-[41px] text-bloom-brass">
+              NT$ {{ order.total_amount.toLocaleString() }}
+            </span>
+          </div>
+
+          <button
+            v-if="order.status === 'pending'"
+            @click="handlePayNow"
+            :disabled="paying"
+            class="mt-8 h-14 w-full rounded-lg bg-bloom-brass text-[13px] font-semibold text-bloom-deep transition-colors hover:bg-[#D4B777] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {{ paying ? '處理中...' : '前往綠界付款' }}
+          </button>
+
+          <a
+            href="/orders"
+            class="mt-4 flex h-11 w-full items-center justify-center rounded-lg border border-bloom-line text-[13px] font-semibold text-bloom-ivory transition-colors hover:text-bloom-brass"
+          >
+            返回我的訂單
+          </a>
+        </aside>
+      </div>
+    </template>
+  </section>
 </div>

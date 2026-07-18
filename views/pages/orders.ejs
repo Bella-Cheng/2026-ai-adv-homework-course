@@ -1,40 +1,103 @@
 <div id="app">
-  <h1 class="text-2xl font-bold text-text-primary mb-6" style="font-family: 'Noto Serif TC', serif;">我的訂單</h1>
+  <section class="mx-auto max-w-[1440px] px-6 py-12 md:px-24">
+    <div class="grid gap-8 lg:grid-cols-[1fr_388px] lg:items-start">
+      <div>
+        <h1 class="font-serif-tc text-[34px] font-bold leading-[44px] text-bloom-green">我的訂單</h1>
+        <p class="mt-4 text-[15px] leading-6 text-bloom-muted">
+          查看花禮訂單編號、建立日期、付款狀態與訂單總額。
+        </p>
+      </div>
 
-  <div v-if="loading" class="flex justify-center py-12">
-    <div class="w-8 h-8 border-4 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
-  </div>
-
-  <div v-else-if="orders.length === 0" class="text-center py-12">
-    <div class="text-4xl mb-3">&#128230;</div>
-    <p class="text-text-secondary mb-1">尚無訂單</p>
-    <p class="text-text-muted text-sm mb-4">快去選購喜歡的花束吧！</p>
-    <a href="/" class="inline-block bg-rose-primary text-white px-6 py-2 rounded-full text-sm hover:bg-rose-dark transition-colors">去逛逛</a>
-  </div>
-
-  <div v-else class="space-y-4">
-    <a
-      v-for="order in orders"
-      :key="order.id"
-      :href="'/orders/' + order.id"
-      class="block bg-white rounded-2xl shadow-sm p-5 hover:shadow-md transition-shadow"
-    >
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-text-secondary">訂單編號：{{ order.order_no }}</p>
-          <p class="text-xs text-text-muted mt-1">{{ new Date(order.created_at).toLocaleDateString('zh-TW') }}</p>
+      <aside class="rounded-lg bg-bloom-green p-7 text-bloom-ivory shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 class="font-serif-tc text-xl font-semibold">訂單總覽</h2>
+            <p class="mt-2 text-[13px] leading-5 text-bloom-ivory/70">依付款狀態快速辨識花禮訂單。</p>
+          </div>
+          <p class="font-serif-tc text-2xl font-semibold text-bloom-brass">{{ orderCount }} 筆訂單</p>
         </div>
-        <div class="flex items-center gap-3">
-          <span class="font-bold text-text-primary">NT$ {{ order.total_amount.toLocaleString() }}</span>
-          <span
-            class="text-xs px-3 py-1 rounded-full font-medium"
-            :class="statusMap[order.status]?.cls || 'bg-gray-100 text-gray-600'"
-          >
-            {{ statusMap[order.status]?.label || order.status }}
-          </span>
-          <span class="text-text-muted">&#8594;</span>
+      </aside>
+    </div>
+
+    <div v-if="loading" class="flex justify-center py-16">
+      <div class="h-8 w-8 animate-spin rounded-full border-4 border-bloom-brass border-t-transparent"></div>
+    </div>
+
+    <template v-else>
+      <div class="mt-12">
+        <p class="text-xs font-semibold uppercase tracking-[0.28em] text-bloom-brass">Order List</p>
+        <h2 class="font-serif-tc mt-4 text-[26px] font-semibold leading-9 text-bloom-green">訂單列表</h2>
+      </div>
+
+      <div v-if="orders.length === 0" class="mt-7 rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
+          <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-lg border border-bloom-brass text-2xl text-bloom-brass">
+            □
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 class="font-serif-tc text-[22px] font-semibold leading-8 text-bloom-green">尚無訂單</h3>
+            <p class="mt-1 text-sm leading-6 text-bloom-muted">目前還沒有花禮訂單，先挑選一束適合今日心意的花束吧。</p>
+          </div>
+          <a href="/#products" class="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-bloom-brass px-8 text-sm font-semibold text-bloom-deep transition-colors hover:bg-[#D4B777]">
+            去逛逛
+          </a>
         </div>
       </div>
-    </a>
-  </div>
+
+      <div v-else class="mt-7 space-y-6">
+        <a
+          v-for="(order, index) in orders"
+          :key="order.id"
+          :href="'/orders/' + order.id"
+          class="group flex min-h-[120px] items-center gap-5 rounded-lg border border-bloom-line bg-bloom-ivory p-5 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)] transition-shadow hover:shadow-[0_20px_38px_rgba(13,33,28,0.14),0_3px_10px_rgba(21,58,48,0.08)]"
+        >
+          <img
+            src="/images/hero-yellow-flowers.jpg"
+            alt="花漾生活花禮訂單"
+            class="h-20 w-20 shrink-0 rounded-lg border border-bloom-line bg-bloom-photo object-cover"
+          />
+
+          <div class="min-w-0 flex-1">
+            <p class="text-sm leading-5 text-bloom-muted">訂單編號：{{ order.order_no }}</p>
+            <p class="mt-2 text-xs leading-4 text-bloom-muted/80">{{ new Date(order.created_at).toLocaleDateString('zh-TW') }}</p>
+            <p class="mt-3 text-xs leading-4 text-bloom-green">{{ orderSummaryText(index) }}</p>
+          </div>
+
+          <div class="flex shrink-0 items-center gap-8">
+            <span class="font-serif-tc text-[22px] font-semibold leading-8 text-bloom-ink">
+              NT$ {{ order.total_amount.toLocaleString() }}
+            </span>
+            <span
+              class="inline-flex h-[30px] min-w-[84px] items-center justify-center rounded-full px-4 text-xs font-medium"
+              :class="statusMap[order.status]?.cls || 'bg-bloom-cream text-bloom-muted'"
+            >
+              {{ statusMap[order.status]?.label || order.status }}
+            </span>
+            <span class="text-2xl leading-none text-bloom-muted transition-colors group-hover:text-bloom-brass">→</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="mt-12 grid gap-8 lg:grid-cols-2">
+        <section class="rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
+          <h2 class="font-serif-tc text-[22px] font-semibold leading-8 text-bloom-green">狀態色系</h2>
+          <div class="mt-5 flex flex-wrap gap-4">
+            <span class="inline-flex h-[30px] items-center rounded-full bg-bloom-brass/20 px-5 text-xs font-medium text-bloom-deep">待付款</span>
+            <span class="inline-flex h-[30px] items-center rounded-full bg-bloom-sage/20 px-5 text-xs font-medium text-bloom-green">已付款</span>
+            <span class="inline-flex h-[30px] items-center rounded-full bg-bloom-blush/20 px-5 text-xs font-medium text-bloom-deep">付款失敗</span>
+          </div>
+          <p class="mt-5 text-[13px] leading-6 text-bloom-muted">
+            對應訂單狀態：pending、paid、failed，方便快速確認花禮付款進度。
+          </p>
+        </section>
+
+        <section class="rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
+          <h2 class="font-serif-tc text-[22px] font-semibold leading-8 text-bloom-green">花禮提醒</h2>
+          <p class="mt-4 text-sm leading-7 text-bloom-muted">
+            待付款訂單可進入訂單詳情重新前往綠界付款；付款完成後，花漾生活會依訂單資訊安排後續配送。
+          </p>
+        </section>
+      </div>
+    </template>
+  </section>
 </div>
