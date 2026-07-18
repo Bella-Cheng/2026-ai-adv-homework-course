@@ -1,4 +1,4 @@
-const { createApp, ref, onMounted } = Vue;
+const { createApp, ref, computed, onMounted } = Vue;
 
 createApp({
   setup() {
@@ -13,6 +13,23 @@ createApp({
 
     const confirmVisible = ref(false);
     const deleteId = ref('');
+    const fallbackImage = '/images/hero-yellow-flowers.jpg';
+    const productSubtitles = [
+      'Pink Rose Bouquet',
+      'White Lily Gift Box',
+      'Sunflower Bouquet',
+      'Purple Tulip Pot',
+      'Dried Flower Wreath',
+      'Succulent Pot Set',
+      'Classic Red Rose Bouquet',
+      'Seasonal Flower Subscription'
+    ];
+
+    const lowStockCount = computed(function () {
+      return products.value.filter(function (product) {
+        return product.stock <= 5;
+      }).length;
+    });
 
     async function loadProducts(page) {
       page = page || 1;
@@ -80,6 +97,19 @@ createApp({
       confirmVisible.value = true;
     }
 
+    function imageFor(product) {
+      return product && product.image_url ? product.image_url : fallbackImage;
+    }
+
+    function productSubtitle(product, index) {
+      if (product && product.description) {
+        return product.description.length > 32
+          ? product.description.slice(0, 32) + '...'
+          : product.description;
+      }
+      return productSubtitles[index % productSubtitles.length];
+    }
+
     async function handleDelete() {
       confirmVisible.value = false;
       try {
@@ -98,9 +128,9 @@ createApp({
     return {
       products, pagination, loading,
       modalVisible, editingProduct, saving, form,
-      confirmVisible,
+      confirmVisible, lowStockCount,
       loadProducts, openCreate, openEdit, handleSave,
-      confirmDeleteFn, handleDelete
+      confirmDeleteFn, handleDelete, imageFor, productSubtitle
     };
   }
 }).mount('#app');
