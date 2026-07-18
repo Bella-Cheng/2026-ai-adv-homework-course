@@ -94,7 +94,7 @@
 - 訂單狀態 `status` 目前使用 `pending`、`paid`、`failed`
 - 付款狀態 `payment_status` 目前使用 `pending`、`paid`、`failed`
 - 綠界付款成功時，會更新 `status=paid` 與 `payment_status=paid`
-- 綠界付款失敗時，訂單維持 `status=金流狀態`，並將 `payment_status` 標記為 `failed`，可再次發起付款
+- 綠界付款失敗時，訂單維持 `status=pending`，並將 `payment_status` 標記為 `failed`，可再次發起付款
 
 綠界金流流程：
 
