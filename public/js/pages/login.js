@@ -10,17 +10,17 @@ createApp({
 
     function validateLogin() {
       errors.value = {};
-      if (!loginForm.value.email.trim()) errors.value.email = '請輸入 Email';
-      if (!loginForm.value.password) errors.value.password = '請輸入密碼';
+      if (!loginForm.value.email.trim()) errors.value.email = '請輸入會員信箱以查看商品收藏';
+      if (!loginForm.value.password) errors.value.password = '請輸入密碼以同步購物車';
       return Object.keys(errors.value).length === 0;
     }
 
     function validateRegister() {
       errors.value = {};
-      if (!registerForm.value.name.trim()) errors.value.name = '請輸入姓名';
-      if (!registerForm.value.email.trim()) errors.value.email = '請輸入 Email';
+      if (!registerForm.value.name.trim()) errors.value.name = '請輸入收件人姓名';
+      if (!registerForm.value.email.trim()) errors.value.email = '請輸入會員信箱以接收花禮通知';
       if (!registerForm.value.password) {
-        errors.value.password = '請輸入密碼';
+        errors.value.password = '請輸入密碼以保護訂單紀錄';
       } else if (registerForm.value.password.length < 6) {
         errors.value.password = '密碼至少 6 個字元';
       }
@@ -36,7 +36,7 @@ createApp({
           body: JSON.stringify(loginForm.value)
         });
         Auth.login(res.data.token, res.data.user);
-        Notification.show('登入成功', 'success');
+        Notification.show('登入成功，已同步商品收藏與購物車', 'success');
         const params = new URLSearchParams(window.location.search);
         window.location.href = params.get('redirect') || '/';
       } catch (err) {
@@ -55,7 +55,7 @@ createApp({
           body: JSON.stringify(registerForm.value)
         });
         Auth.login(res.data.token, res.data.user);
-        Notification.show('註冊成功', 'success');
+        Notification.show('註冊成功，已建立花禮會員帳號', 'success');
         const params = new URLSearchParams(window.location.search);
         window.location.href = params.get('redirect') || '/';
       } catch (err) {
