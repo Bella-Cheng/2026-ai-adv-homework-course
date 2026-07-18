@@ -77,6 +77,7 @@
 - 建立訂單 `POST /api/orders`
 - 查詢我的訂單 `GET /api/orders`
 - 查詢訂單詳情 `GET /api/orders/:id`
+- 重新取得綠界付款表單 `POST /api/orders/:id/ecpay-checkout`
 - 模擬付款結果 `PATCH /api/orders/:id/pay`
 
 建立訂單時已包含：
@@ -85,12 +86,28 @@
 - 檢查購物車是否為空
 - 檢查商品庫存
 - 使用 transaction 建立訂單、寫入明細、扣庫存、清空購物車
+- 建立訂單時同步產生綠界付款參數
+- 訂單會記錄 `payment_provider`、`payment_status`、`merchant_trade_no`
+
+金流狀態現況：
+
+- 訂單狀態 `status` 目前使用 `pending`、`paid`、`failed`
+- 付款狀態 `payment_status` 目前使用 `pending`、`paid`、`failed`
+- 綠界付款成功時，會更新 `status=paid` 與 `payment_status=paid`
+- 綠界付款失敗時，訂單維持 `status=金流狀態`，並將 `payment_status` 標記為 `failed`，可再次發起付款
+
+綠界金流流程：
+
+- 綠界伺服器回傳通知 `POST /api/payments/ecpay/return`
+- 前端付款結果導回 `POST /payments/ecpay/result`
+- 訂單詳情頁可顯示付款結果、付款方式與付款時間
 
 後台訂單功能：
 
 - 訂單列表查詢 `GET /api/admin/orders`
 - 訂單詳情查詢 `GET /api/admin/orders/:id`
 - 支援依 `status` 篩選訂單
+- 後台列表與詳情可查看付款狀態
 
 ## 6. 權限與角色控制
 
@@ -135,7 +152,6 @@
 - 忘記密碼／重設密碼
 - 會員資料編輯
 - 商品分類、搜尋、排序
-- 線上金流串接完成版
 - 優惠券、折扣碼、促銷活動
 - 訂單取消、退貨、退款流程
 - 圖片上傳與檔案儲存管理
