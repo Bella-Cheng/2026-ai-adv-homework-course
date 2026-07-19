@@ -1,6 +1,6 @@
 <div id="app">
   <div class="mx-auto max-w-[1088px]">
-    <div class="flex items-start justify-between gap-6">
+    <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
       <div>
         <p class="text-xs font-semibold uppercase tracking-wide text-bloom-brass">Admin Products</p>
         <h1 class="font-serif-tc mt-2 text-[38px] font-semibold leading-[44px] text-bloom-green">商品管理</h1>
@@ -10,13 +10,13 @@
       </div>
       <button
         @click="openCreate"
-        class="mt-8 h-[42px] w-[146px] rounded bg-bloom-brass text-[13px] font-semibold text-bloom-deep transition-colors hover:bg-[#D4B777]"
+        class="h-[42px] w-full rounded bg-bloom-brass text-[13px] font-semibold text-bloom-deep transition-colors hover:bg-[#D4B777] sm:mt-8 sm:w-[146px]"
       >
         新增商品
       </button>
     </div>
 
-    <div class="mt-10 grid gap-7 md:grid-cols-4">
+    <div class="mt-10 grid gap-7 sm:grid-cols-2 xl:grid-cols-4">
       <article class="rounded-lg border border-bloom-line bg-bloom-ivory p-6 shadow-[0_8px_24px_rgba(13,20,15,0.10),0_2px_6px_rgba(13,20,15,0.04)]">
         <p class="text-[13px] text-bloom-muted">商品總數</p>
         <div class="mt-2 flex items-end justify-between">
@@ -60,8 +60,8 @@
     </div>
 
     <template v-else>
-      <div class="mt-8 overflow-hidden rounded-lg">
-        <table class="w-full text-sm">
+      <div class="mt-8 overflow-x-auto rounded-lg">
+        <table class="min-w-[760px] w-full text-sm">
           <thead>
             <tr class="h-[52px] bg-bloom-green text-left text-xs font-semibold text-bloom-ivory">
               <th class="px-6 font-semibold">商品</th>
@@ -138,7 +138,7 @@
           <label class="mb-1 block text-sm text-bloom-muted">商品描述</label>
           <textarea v-model="form.description" rows="3" class="w-full rounded-lg border border-bloom-line bg-bloom-cream px-3 py-2 text-sm focus:border-bloom-brass focus:outline-none"></textarea>
         </div>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <label class="mb-1 block text-sm text-bloom-muted">價格 *</label>
             <input v-model.number="form.price" type="number" min="1" class="w-full rounded-lg border border-bloom-line bg-bloom-cream px-3 py-2 text-sm focus:border-bloom-brass focus:outline-none" />
@@ -152,7 +152,7 @@
           <label class="mb-1 block text-sm text-bloom-muted">圖片 URL</label>
           <input v-model="form.image_url" type="text" class="w-full rounded-lg border border-bloom-line bg-bloom-cream px-3 py-2 text-sm focus:border-bloom-brass focus:outline-none" />
         </div>
-        <div class="flex justify-end gap-3 pt-2">
+        <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
           <button type="button" @click="modalVisible = false" class="rounded-lg border border-bloom-line px-4 py-2 text-sm text-bloom-muted hover:text-bloom-green">取消</button>
           <button type="submit" :disabled="saving" class="rounded-lg bg-bloom-brass px-4 py-2 text-sm font-semibold text-bloom-deep hover:bg-[#D4B777] disabled:opacity-50">
             {{ saving ? '儲存中...' : '儲存' }}
@@ -167,7 +167,7 @@
     <div class="relative mx-4 w-full max-w-sm rounded-lg border border-bloom-line bg-bloom-ivory p-6 text-center shadow-xl">
       <h3 class="font-serif-tc text-lg font-semibold text-bloom-green">確認刪除</h3>
       <p class="mb-6 mt-2 text-sm text-bloom-muted">確定要刪除這個花藝商品嗎？刪除後前台商品卡片將不再顯示。</p>
-      <div class="flex justify-center gap-3">
+      <div class="flex flex-col-reverse justify-center gap-3 sm:flex-row">
         <button @click="confirmVisible = false" class="rounded-lg border border-bloom-line px-4 py-2 text-sm text-bloom-muted hover:text-bloom-green">取消</button>
         <button @click="handleDelete" class="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600">確認刪除</button>
       </div>

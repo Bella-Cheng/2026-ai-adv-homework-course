@@ -1,5 +1,5 @@
 <div id="app">
-  <section class="relative min-h-[650px] overflow-hidden bg-bloom-green">
+  <section class="relative min-h-[560px] overflow-hidden bg-bloom-green md:min-h-[650px]">
     <div class="absolute inset-y-0 right-0 w-full opacity-30 md:w-[70%] md:opacity-100">
       <img
         src="/images/hero-yellow-flowers.jpg"
@@ -10,10 +10,10 @@
       <div class="absolute inset-y-0 left-0 w-[36%] bg-gradient-to-r from-bloom-green via-bloom-green/75 to-transparent"></div>
       <div class="absolute inset-0 bg-gradient-to-t from-bloom-green/35 via-transparent to-transparent"></div>
     </div>
-    <div class="relative mx-auto flex min-h-[650px] max-w-[1440px] items-center px-6 py-24 md:px-24">
+    <div class="relative mx-auto flex min-h-[560px] max-w-[1440px] items-center px-4 py-20 sm:px-6 md:min-h-[650px] md:px-12 md:py-24 lg:px-24">
       <div class="max-w-[680px] text-bloom-ivory">
         <p class="mb-5 text-sm uppercase tracking-[0.28em] text-bloom-brass">Seasonal Floral Studio</p>
-        <h1 class="font-serif-tc text-[44px] font-semibold leading-tight md:text-[68px]">
+        <h1 class="font-serif-tc text-[40px] font-semibold leading-tight sm:text-[44px] md:text-[68px]">
           讓每一束花<br />成為值得記住的時刻
         </h1>
         <p class="mt-6 max-w-[540px] text-base leading-8 text-bloom-ivory/82">
@@ -31,7 +31,7 @@
     </div>
   </section>
 
-  <section class="mx-auto max-w-[1440px] px-6 py-[112px] md:px-24">
+  <section class="mx-auto max-w-[1440px] px-4 py-20 sm:px-6 md:px-12 md:py-[112px] lg:px-24">
     <div>
       <h2 class="font-serif-tc text-[34px] font-semibold text-bloom-green md:text-[38px]">探索花禮分類</h2>
       <p class="mt-4 max-w-[480px] text-[15px] leading-7 text-bloom-muted">以當季花呈現夏季花束、花禮盒、向日葵與乾燥花圈等人氣分類。</p>
@@ -49,7 +49,7 @@
         class="group text-left"
         @click="goToProduct(product.id)"
       >
-        <span class="block h-[330px] overflow-hidden rounded-lg border border-bloom-line bg-bloom-photo shadow-[0_16px_34px_rgba(13,33,28,0.12),0_2px_8px_rgba(21,58,48,0.08)]">
+        <span class="block aspect-[4/5] overflow-hidden rounded-lg border border-bloom-line bg-bloom-photo shadow-[0_16px_34px_rgba(13,33,28,0.12),0_2px_8px_rgba(21,58,48,0.08)] sm:h-[330px] sm:aspect-auto">
           <img :src="imageFor(product, idx, 700)" :alt="product.name" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         </span>
         <span class="mt-5 block font-serif-tc text-[18px] font-semibold text-bloom-ink">{{ product.name }}</span>
@@ -59,8 +59,8 @@
   </section>
 
   <section id="featured" class="bg-bloom-green text-bloom-ivory">
-    <div class="mx-auto grid min-h-[640px] max-w-[1440px] gap-12 px-6 py-[90px] md:grid-cols-[560px_1fr] md:px-24">
-      <div class="h-[440px] overflow-hidden rounded-lg border border-bloom-brass/30 bg-bloom-photo">
+    <div class="mx-auto grid min-h-[640px] max-w-[1440px] gap-10 px-4 py-16 sm:px-6 md:grid-cols-[minmax(0,560px)_1fr] md:px-12 md:py-[90px] lg:px-24">
+      <div class="aspect-[4/3] overflow-hidden rounded-lg border border-bloom-brass/30 bg-bloom-photo md:h-[440px] md:aspect-auto">
         <img
           v-if="featuredProduct"
           :src="imageFor(featuredProduct, 0, 900)"
@@ -70,7 +70,7 @@
       </div>
       <div class="flex flex-col justify-center">
         <p class="text-sm uppercase tracking-[0.28em] text-bloom-brass">This Season</p>
-        <h2 class="font-serif-tc mt-6 max-w-[440px] text-[38px] font-semibold leading-tight">
+        <h2 class="font-serif-tc mt-6 max-w-[440px] text-[32px] font-semibold leading-tight md:text-[38px]">
           {{ featuredProduct ? featuredProduct.name : '夏季限定花束' }}
         </h2>
         <p class="mt-6 max-w-[430px] text-[15px] leading-8 text-bloom-ivory/75">
@@ -101,7 +101,7 @@
     </div>
   </section>
 
-  <section id="products" class="mx-auto max-w-[1440px] px-6 py-[112px] md:px-24">
+  <section id="products" class="mx-auto max-w-[1440px] px-4 py-20 sm:px-6 md:px-12 md:py-[112px] lg:px-24">
     <div>
       <h2 class="font-serif-tc text-[34px] font-semibold text-bloom-green md:text-[38px]">所有花藝商品</h2>
       <p class="mt-4 max-w-[460px] text-[15px] leading-7 text-bloom-muted">依照季節花材與送禮情境精選花束、禮盒與植栽，為生日、紀念日與日常心意挑選剛剛好的花禮。</p>
@@ -117,14 +117,14 @@
         <p class="mt-2 text-sm text-bloom-muted">請稍後再回來查看本季花禮。</p>
       </div>
 
-      <div v-else class="mt-14 grid gap-x-24 gap-y-[90px] sm:grid-cols-2 lg:grid-cols-4">
+      <div v-else class="mt-14 grid gap-x-10 gap-y-14 sm:grid-cols-2 md:gap-y-[90px] lg:grid-cols-4 xl:gap-x-24">
         <article
           v-for="(product, idx) in products"
           :key="product.id"
           class="group cursor-pointer"
           @click="goToProduct(product.id)"
         >
-          <div class="h-[280px] overflow-hidden rounded-lg border border-bloom-line bg-bloom-photo shadow-[0_16px_34px_rgba(13,33,28,0.12),0_2px_8px_rgba(21,58,48,0.08)]">
+          <div class="aspect-[4/5] overflow-hidden rounded-lg border border-bloom-line bg-bloom-photo shadow-[0_16px_34px_rgba(13,33,28,0.12),0_2px_8px_rgba(21,58,48,0.08)] sm:h-[280px] sm:aspect-auto">
             <img :src="imageFor(product, idx, 700)" :alt="product.name" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
           </div>
           <div class="pt-6 text-center">
@@ -158,7 +158,7 @@
   </section>
 
   <section id="next-season" class="bg-bloom-ivory">
-    <div class="mx-auto max-w-[1440px] px-6 py-20 md:px-24">
+    <div class="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 md:px-12 md:py-20 lg:px-24">
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p class="text-sm uppercase tracking-[0.28em] text-bloom-brass">Next Season</p>
@@ -166,7 +166,7 @@
         </div>
         <p class="max-w-[420px] text-sm leading-7 text-bloom-muted">下季以乾燥玫瑰、霧金與鼠尾草綠為主軸，開放預購提醒。</p>
       </div>
-      <div class="mt-10 grid gap-6 md:grid-cols-4">
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <div
           v-for="(product, idx) in nextSeasonProducts"
           :key="'next-' + product.id"
@@ -186,7 +186,7 @@
   </section>
 
   <section id="notice" class="bg-bloom-cream">
-    <div class="mx-auto grid max-w-[1440px] gap-10 px-6 py-[70px] md:grid-cols-[360px_1fr] md:px-24">
+    <div class="mx-auto grid max-w-[1440px] gap-10 px-4 py-16 sm:px-6 md:px-12 md:py-[70px] lg:px-24 xl:grid-cols-[minmax(0,360px)_1fr]">
       <h2 class="font-serif-tc text-[34px] font-semibold leading-tight text-bloom-green">顧客花束好評分享</h2>
       <div class="grid gap-10 md:grid-cols-3">
         <article class="text-sm leading-7 text-bloom-muted">

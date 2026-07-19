@@ -1,28 +1,28 @@
 <header class="sticky top-0 z-50">
   <% const isProductDetailHeader = typeof title !== 'undefined' && title === '商品詳情'; %>
   <div class="h-9 bg-bloom-deep text-bloom-ivory">
-    <div class="mx-auto flex h-full max-w-[1440px] items-center justify-between px-6 text-[12px] tracking-wide md:px-16">
-      <p>Flower Life 花漾生活    |    當季鮮花・花禮盒・訂閱配送</p>
+    <div class="mx-auto flex h-full max-w-[1440px] items-center justify-between gap-4 px-4 text-[11px] tracking-wide sm:px-6 md:px-16 md:text-[12px]">
+      <p class="min-w-0 truncate">Flower Life 花漾生活    |    當季鮮花・花禮盒・訂閱配送</p>
       <p class="hidden text-bloom-brass sm:block">本季熱賣：粉色玫瑰花束</p>
     </div>
   </div>
   <div class="h-[74px] border-b border-bloom-line <%= isProductDetailHeader ? 'bg-bloom-green text-bloom-ivory shadow-none' : 'bg-bloom-ivory text-bloom-ink shadow-[0_8px_24px_rgba(13,33,28,0.08)]' %>">
-    <div class="mx-auto flex h-full max-w-[1440px] items-center px-6 md:px-16">
-      <a href="/" class="mr-10 shrink-0">
-        <span class="font-serif-tc block text-[24px] font-semibold leading-none <%= isProductDetailHeader ? 'text-bloom-ivory' : 'text-bloom-green' %>">花漾生活</span>
-        <span class="mt-2 block text-[11px] uppercase tracking-[0.24em] <%= isProductDetailHeader ? 'text-bloom-sage' : 'text-bloom-muted' %>">Flower Life</span>
+    <div class="mx-auto flex h-full max-w-[1440px] items-center gap-3 px-4 sm:px-6 md:px-16">
+      <a href="/" class="shrink-0 lg:mr-10">
+        <span class="font-serif-tc block text-[20px] font-semibold leading-none sm:text-[24px] <%= isProductDetailHeader ? 'text-bloom-ivory' : 'text-bloom-green' %>">花漾生活</span>
+        <span class="mt-2 hidden text-[11px] uppercase tracking-[0.24em] sm:block <%= isProductDetailHeader ? 'text-bloom-sage' : 'text-bloom-muted' %>">Flower Life</span>
       </a>
 
       <nav class="hidden flex-1 items-center justify-center gap-12 text-sm <%= isProductDetailHeader ? 'text-bloom-ivory' : 'text-bloom-ink' %> lg:flex xl:gap-14">
-        <a href="/" class="whitespace-nowrap transition-colors hover:text-bloom-brass">首頁</a>
-        <a href="/#products" class="whitespace-nowrap transition-colors hover:text-bloom-brass">所有花藝商品</a>
-        <a href="/#featured" class="whitespace-nowrap transition-colors hover:text-bloom-brass">本季熱賣</a>
-        <a href="/#next-season" class="whitespace-nowrap transition-colors hover:text-bloom-brass">下季預購</a>
-        <a id="orders-link" href="/orders" class="whitespace-nowrap transition-colors hover:text-bloom-brass" style="display: none;">訂單</a>
+        <a href="/" data-nav-link class="whitespace-nowrap transition-colors hover:text-bloom-brass">首頁</a>
+        <a href="/#products" data-nav-link class="whitespace-nowrap transition-colors hover:text-bloom-brass">所有花藝商品</a>
+        <a href="/#featured" data-nav-link class="whitespace-nowrap transition-colors hover:text-bloom-brass">本季熱賣</a>
+        <a href="/#next-season" data-nav-link class="whitespace-nowrap transition-colors hover:text-bloom-brass">下季預購</a>
+        <a id="orders-link" href="/orders" data-nav-link class="whitespace-nowrap transition-colors hover:text-bloom-brass" style="display: none;">訂單</a>
       </nav>
 
-      <div class="ml-12 flex shrink-0 items-center gap-7 text-sm font-semibold <%= isProductDetailHeader ? 'text-bloom-brass' : 'text-bloom-green' %>">
-        <a href="/cart" class="relative whitespace-nowrap transition-colors hover:text-bloom-brass">
+      <div class="ml-auto flex min-w-0 shrink-0 items-center justify-end gap-5 text-xs font-semibold sm:gap-6 sm:text-sm lg:ml-12 lg:gap-7 <%= isProductDetailHeader ? 'text-bloom-brass' : 'text-bloom-green' %>">
+        <a href="/cart" data-nav-link class="relative whitespace-nowrap transition-colors hover:text-bloom-brass">
           購物車
           <span
             id="cart-badge"
@@ -30,7 +30,7 @@
             style="display: none;"
           ></span>
         </a>
-        <div id="auth-nav" class="flex items-center gap-4"></div>
+        <div id="auth-nav" class="flex items-center gap-4 sm:gap-5"></div>
         <a href="/#notice" class="hidden items-center gap-2 whitespace-nowrap <%= isProductDetailHeader ? 'text-bloom-brass' : 'text-bloom-green' %> transition-colors hover:text-bloom-brass" aria-label="通知">
           <span>通知</span>
           <svg class="h-[18px] w-[18px] <%= isProductDetailHeader ? 'text-bloom-brass' : 'text-bloom-green' %>" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -38,7 +38,33 @@
             <path d="M9.6 19C10.1 20.2 11 21 12 21C13 21 13.9 20.2 14.4 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </a>
+        <button
+          id="mobile-menu-toggle"
+          type="button"
+          class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-bloom-green transition-colors hover:text-bloom-brass lg:hidden"
+          aria-label="開啟導覽選單"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+        >
+          <span class="flex flex-col gap-1" aria-hidden="true">
+            <span class="block h-0.5 w-4 bg-current"></span>
+            <span class="block h-0.5 w-4 bg-current"></span>
+            <span class="block h-0.5 w-4 bg-current"></span>
+          </span>
+        </button>
       </div>
     </div>
+  </div>
+  <div
+    id="mobile-menu"
+    class="hidden border-b border-bloom-line bg-bloom-ivory px-4 py-4 shadow-[0_12px_24px_rgba(13,33,28,0.10)] lg:hidden"
+  >
+    <nav class="mx-auto grid max-w-[1440px] gap-2 text-sm font-semibold text-bloom-green" aria-label="手機導覽">
+      <a href="/" data-nav-link class="rounded-lg px-4 py-3 transition-colors hover:bg-bloom-cream hover:text-bloom-brass">首頁</a>
+      <a href="/#products" data-nav-link class="rounded-lg px-4 py-3 transition-colors hover:bg-bloom-cream hover:text-bloom-brass">所有花藝商品</a>
+      <a href="/#featured" data-nav-link class="rounded-lg px-4 py-3 transition-colors hover:bg-bloom-cream hover:text-bloom-brass">本季熱賣</a>
+      <a href="/#next-season" data-nav-link class="rounded-lg px-4 py-3 transition-colors hover:bg-bloom-cream hover:text-bloom-brass">下季預購</a>
+      <a id="mobile-orders-link" href="/orders" data-nav-link class="hidden rounded-lg px-4 py-3 transition-colors hover:bg-bloom-cream hover:text-bloom-brass">訂單</a>
+    </nav>
   </div>
 </header>

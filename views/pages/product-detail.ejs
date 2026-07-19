@@ -11,7 +11,7 @@
 
   <template v-else-if="product">
     <div class="bg-bloom-ivory">
-      <div class="mx-auto max-w-[1440px] px-6 py-6 md:px-24">
+      <div class="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 md:px-12 lg:px-24">
         <nav class="flex flex-wrap items-center gap-2 text-[13px] text-bloom-muted" aria-label="麵包屑">
           <a href="/" class="cursor-pointer transition-colors hover:text-bloom-brass">首頁</a>
           <span>/</span>
@@ -22,18 +22,18 @@
       </div>
     </div>
 
-    <section class="mx-auto grid max-w-[1440px] gap-14 px-6 py-[70px] md:grid-cols-[610px_1fr] md:px-24">
+    <section class="mx-auto grid max-w-[1440px] gap-10 px-4 py-12 sm:px-6 md:grid-cols-[minmax(0,610px)_1fr] md:px-12 md:py-[70px] lg:px-24">
       <div>
-        <div class="h-[650px] overflow-hidden rounded-lg border border-bloom-line bg-bloom-photo">
+        <div class="aspect-[4/5] max-h-[650px] overflow-hidden rounded-lg border border-bloom-line bg-bloom-photo md:aspect-auto md:h-[650px]">
           <img :src="imageFor(product)" :alt="product.name" class="h-full w-full object-cover" />
         </div>
 
-        <div class="mt-8 flex gap-6">
+        <div class="mt-6 grid grid-cols-4 gap-3 sm:mt-8 sm:flex sm:gap-6">
           <button
             v-for="index in 4"
             :key="index"
             type="button"
-            class="h-[88px] w-[88px] overflow-hidden rounded-lg border border-bloom-line bg-bloom-photo"
+            class="aspect-square w-full overflow-hidden rounded-lg border border-bloom-line bg-bloom-photo sm:h-[88px] sm:w-[88px]"
           >
             <img :src="imageFor(product)" :alt="product.name + ' 商品縮圖 ' + index" class="h-full w-full object-cover" />
           </button>
@@ -42,7 +42,7 @@
 
       <div class="pt-1">
         <span class="inline-flex h-7 items-center rounded-full bg-bloom-brass px-5 text-xs font-medium text-bloom-deep">本季熱賣</span>
-        <h1 class="font-serif-tc mt-7 text-[48px] font-semibold leading-[56px] text-bloom-green">
+        <h1 class="font-serif-tc mt-7 text-[36px] font-semibold leading-[46px] text-bloom-green md:text-[48px] md:leading-[56px]">
           {{ product.name }}
         </h1>
         <p class="mt-3 text-[15px] leading-[22px] text-bloom-muted">{{ productSubtitle }}</p>
@@ -50,7 +50,7 @@
           {{ product.description || productCopy }}
         </p>
 
-        <div class="mt-9 flex items-center gap-10">
+        <div class="mt-9 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-10">
           <p class="text-[30px] font-semibold leading-[34px] text-bloom-green">NT$ {{ product.price.toLocaleString() }}</p>
           <p class="text-[13px] text-bloom-muted">庫存 {{ product.stock }} 件</p>
         </div>
@@ -65,14 +65,14 @@
           <button
             @click="addToCart"
             :disabled="adding || product.stock <= 0"
-            class="h-12 w-[188px] rounded bg-bloom-green text-[13px] font-semibold text-bloom-ivory transition-colors hover:text-bloom-brass disabled:cursor-not-allowed disabled:opacity-50"
+            class="h-12 w-full rounded bg-bloom-green text-[13px] font-semibold text-bloom-ivory transition-colors hover:text-bloom-brass disabled:cursor-not-allowed disabled:opacity-50 sm:w-[188px]"
           >
             {{ product.stock <= 0 ? '已售完' : '加入購物車' }}
           </button>
           <button
             @click="buyNow"
             :disabled="adding || product.stock <= 0"
-            class="h-12 w-[168px] rounded bg-bloom-brass text-[13px] font-semibold text-bloom-deep transition-colors hover:bg-[#D4B777] disabled:cursor-not-allowed disabled:opacity-50"
+            class="h-12 w-full rounded bg-bloom-brass text-[13px] font-semibold text-bloom-deep transition-colors hover:bg-[#D4B777] disabled:cursor-not-allowed disabled:opacity-50 sm:w-[168px]"
           >
             直接結帳
           </button>
@@ -91,7 +91,7 @@
     </section>
 
     <section class="bg-bloom-ivory">
-      <div class="mx-auto flex max-w-[1440px] flex-col gap-8 px-6 py-16 md:flex-row md:items-center md:px-24">
+      <div class="mx-auto flex max-w-[1440px] flex-col gap-8 px-4 py-16 sm:px-6 md:flex-row md:items-center md:px-12 lg:px-24">
         <h2 class="font-serif-tc text-[28px] font-semibold leading-[34px] text-bloom-green">你可能也喜歡</h2>
         <p class="text-[15px] leading-[22px] text-bloom-ink">白色百合花禮盒　　繽紛向日葵花束　　季節鮮花訂閱（月配）</p>
       </div>

@@ -1,7 +1,7 @@
 <div id="app">
-  <section class="mx-auto max-w-[1440px] px-6 py-12 md:px-24">
+  <section class="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 md:px-12 lg:px-24 lg:py-12">
     <p class="text-xs font-semibold uppercase tracking-[0.28em] text-bloom-brass">Summer Bouquet Cart</p>
-    <h1 class="font-serif-tc mt-4 text-[44px] font-bold leading-[64px] text-bloom-ink">購物車花禮明細</h1>
+    <h1 class="font-serif-tc mt-4 text-[34px] font-bold leading-[46px] text-bloom-ink md:text-[44px] md:leading-[64px]">購物車花禮明細</h1>
     <p class="mt-2 max-w-[620px] text-base leading-[23px] text-bloom-muted">
       確認本季花束、配送與花禮卡片，下一步前往結帳完成付款。
     </p>
@@ -19,7 +19,7 @@
     <template v-else>
       <div class="mt-12 grid gap-10 lg:grid-cols-[820px_388px]">
         <div>
-          <div class="rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_18px_34px_rgba(13,33,28,0.08),0_4px_8px_rgba(13,33,28,0.04)]">
+          <div class="rounded-lg border border-bloom-line bg-bloom-ivory p-5 shadow-[0_18px_34px_rgba(13,33,28,0.08),0_4px_8px_rgba(13,33,28,0.04)] md:p-8">
             <h2 class="font-serif-tc text-[22px] font-semibold leading-8 text-bloom-ink">花禮明細</h2>
             <p class="mt-1 text-[13px] leading-[19px] text-bloom-muted">
               共 {{ itemCount }} 件商品，可調整數量或移除花束。
@@ -29,7 +29,7 @@
               <article
                 v-for="(item, index) in items"
                 :key="item.id"
-                class="relative flex min-h-[132px] items-center gap-6 rounded-lg border border-bloom-line bg-bloom-ivory p-5 shadow-[0_18px_34px_rgba(13,33,28,0.06),0_4px_8px_rgba(13,33,28,0.04)]"
+                class="relative flex min-h-[132px] flex-col items-start gap-5 rounded-lg border border-bloom-line bg-bloom-ivory p-5 shadow-[0_18px_34px_rgba(13,33,28,0.06),0_4px_8px_rgba(13,33,28,0.04)] sm:flex-row sm:items-center sm:gap-6"
               >
                 <img
                   :src="imageFor(item.product)"
@@ -44,7 +44,7 @@
                   </span>
                 </div>
 
-                <div class="flex h-[42px] w-[110px] shrink-0 items-center justify-between rounded-lg border border-bloom-line bg-bloom-cream px-4 text-[13px] font-semibold text-bloom-green">
+                <div class="flex h-[42px] w-full items-center justify-between rounded-lg border border-bloom-line bg-bloom-cream px-4 text-[13px] font-semibold text-bloom-green sm:w-[110px] sm:shrink-0">
                   <button
                     @click="updateQuantity(item.id, item.quantity - 1)"
                     :disabled="item.quantity <= 1"
@@ -62,7 +62,7 @@
                   </button>
                 </div>
 
-                <p class="w-[118px] shrink-0 text-right text-base font-bold leading-[23px] text-bloom-brass">
+                <p class="w-full text-left text-base font-bold leading-[23px] text-bloom-brass sm:w-[118px] sm:shrink-0 sm:text-right">
                   NT$ {{ (item.product.price * item.quantity).toLocaleString() }}
                 </p>
 
@@ -90,7 +90,7 @@
           </div>
         </div>
 
-        <aside class="rounded-lg bg-bloom-green p-9 text-bloom-ivory shadow-[0_18px_34px_rgba(13,33,28,0.10),0_4px_8px_rgba(13,33,28,0.04)] lg:sticky lg:top-32 lg:h-[604px]">
+        <aside class="rounded-lg bg-bloom-green p-6 text-bloom-ivory shadow-[0_18px_34px_rgba(13,33,28,0.10),0_4px_8px_rgba(13,33,28,0.04)] md:p-9 lg:sticky lg:top-32 lg:h-[604px]">
           <p class="text-xs font-semibold uppercase text-bloom-brass">Order Summary</p>
           <h2 class="font-serif-tc mt-3 text-[28px] font-bold leading-[41px]">訂單摘要</h2>
           <p class="mt-2 text-[13px] leading-[19px] text-bloom-sage">
@@ -137,7 +137,7 @@
 
   <div v-if="confirmVisible" class="fixed inset-0 z-50 flex items-center justify-center">
     <div class="absolute inset-0 bg-black/40" @click="confirmVisible = false"></div>
-    <div class="relative mx-4 w-full max-w-sm rounded-[22px] bg-white p-7 shadow-[0_10px_28px_rgba(0,0,0,0.18)]">
+    <div class="relative mx-4 w-full max-w-sm rounded-lg border border-bloom-line bg-bloom-ivory p-6 shadow-[0_10px_28px_rgba(0,0,0,0.18)] sm:p-7">
       <h3 class="font-serif-tc text-xl font-bold text-bloom-green">確認移除</h3>
       <p class="mt-3 text-sm text-bloom-ink">確定要從購物車中移除這個商品嗎？</p>
       <div class="mt-5 flex gap-6 text-sm font-medium">
