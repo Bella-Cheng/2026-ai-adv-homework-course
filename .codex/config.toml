@@ -12,3 +12,8 @@ writable_roots = [
   "~/.npm",
   "~/Library/pnpm"
 ]
+
+[mcp_servers.playwright]
+command = "npx.cmd"
+args = ["-y", "@playwright/mcp@latest"]
+default_tools_approval_mode = "approve"
