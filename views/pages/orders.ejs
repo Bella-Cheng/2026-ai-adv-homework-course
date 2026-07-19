@@ -12,7 +12,7 @@
         <div class="flex items-start justify-between gap-4">
           <div>
             <h2 class="font-serif-tc text-xl font-semibold">訂單總覽</h2>
-            <p class="mt-2 text-[13px] leading-5 text-bloom-ivory/70">依付款狀態快速辨識花禮訂單。</p>
+            <p class="mt-2 text-[13px] leading-5 text-bloom-ivory/70">彙整近期花禮訂單與付款進度。</p>
           </div>
           <p class="font-serif-tc text-2xl font-semibold text-bloom-brass">{{ orderCount }} 筆訂單</p>
         </div>
@@ -31,9 +31,6 @@
 
       <div v-if="orders.length === 0" class="mt-7 rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
         <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-lg border border-bloom-brass text-2xl text-bloom-brass">
-            □
-          </div>
           <div class="min-w-0 flex-1">
             <h3 class="font-serif-tc text-[22px] font-semibold leading-8 text-bloom-green">尚無訂單</h3>
             <p class="mt-1 text-sm leading-6 text-bloom-muted">目前還沒有花禮訂單，先挑選一束適合今日心意的花束吧。</p>
@@ -78,19 +75,7 @@
         </a>
       </div>
 
-      <div class="mt-12 grid gap-8 lg:grid-cols-2">
-        <section class="rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
-          <h2 class="font-serif-tc text-[22px] font-semibold leading-8 text-bloom-green">狀態色系</h2>
-          <div class="mt-5 flex flex-wrap gap-4">
-            <span class="inline-flex h-[30px] items-center rounded-full bg-bloom-brass/20 px-5 text-xs font-medium text-bloom-deep">待付款</span>
-            <span class="inline-flex h-[30px] items-center rounded-full bg-bloom-sage/20 px-5 text-xs font-medium text-bloom-green">已付款</span>
-            <span class="inline-flex h-[30px] items-center rounded-full bg-bloom-blush/20 px-5 text-xs font-medium text-bloom-deep">付款失敗</span>
-          </div>
-          <p class="mt-5 text-[13px] leading-6 text-bloom-muted">
-            對應訂單狀態：pending、paid、failed，方便快速確認花禮付款進度。
-          </p>
-        </section>
-
+      <div class="mt-12">
         <section class="rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
           <h2 class="font-serif-tc text-[22px] font-semibold leading-8 text-bloom-green">花禮提醒</h2>
           <p class="mt-4 text-sm leading-7 text-bloom-muted">

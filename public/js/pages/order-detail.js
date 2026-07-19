@@ -19,7 +19,7 @@ createApp({
 
     const paymentMessages = {
       success: { text: '付款已送出，系統正在確認結果。', cls: 'border border-bloom-sage/30 bg-bloom-sage/10 text-bloom-green' },
-      failed: { text: '付款失敗，請重新嘗試。', cls: 'border border-red-200 bg-red-50 text-red-600' },
+      failed: { text: '付款失敗，請重新嘗試。', cls: 'border border-bloom-brass/40 bg-bloom-blush/30 text-bloom-deep' },
       cancel: { text: '付款已取消。', cls: 'border border-bloom-brass/30 bg-bloom-brass/10 text-bloom-deep' },
       processing: { text: '付款結果回寫中，請稍候重新整理。', cls: 'border border-bloom-brass/30 bg-bloom-brass/10 text-bloom-deep' }
     };

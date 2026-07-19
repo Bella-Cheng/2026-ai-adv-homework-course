@@ -8,9 +8,9 @@ createApp({
     const loading = ref(true);
 
     const statusMap = {
-      pending: { label: '待付款', cls: 'bg-bloom-brass/20 text-bloom-deep' },
-      paid: { label: '已付款', cls: 'bg-bloom-sage/20 text-bloom-green' },
-      failed: { label: '付款失敗', cls: 'bg-bloom-blush/20 text-bloom-deep' },
+      pending: { label: '待付款', cls: 'border border-bloom-line bg-bloom-cream text-bloom-muted' },
+      paid: { label: '已付款', cls: 'border border-bloom-line bg-bloom-cream text-bloom-muted' },
+      failed: { label: '付款失敗', cls: 'border border-bloom-line bg-bloom-cream text-bloom-muted' },
     };
 
     const orderCount = computed(function () {

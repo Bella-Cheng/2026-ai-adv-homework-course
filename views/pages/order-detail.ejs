@@ -1,6 +1,26 @@
 <div id="app" data-order-id="<%= orderId %>" data-payment-result="<%= paymentResult %>">
   <section class="mx-auto max-w-[1440px] px-6 py-12 md:px-24">
-    <div class="grid gap-8 lg:grid-cols-[1fr_388px] lg:items-start">
+    <div v-if="paymentResult === 'success'" class="grid gap-6 lg:grid-cols-[1fr_388px] lg:items-start">
+      <div>
+        <p class="text-[13px] font-semibold uppercase leading-[18px] text-bloom-brass">CHECKOUT SUCCESS</p>
+        <h1 class="mt-3 text-[42px] font-semibold leading-[52px] text-bloom-green md:text-[48px] md:leading-[65px]">訂單成立</h1>
+        <p class="mt-1 max-w-[620px] text-[18px] leading-8 text-bloom-muted">
+          我們已收到你的花禮訂單，配送與通知資訊會同步更新。
+        </p>
+      </div>
+    </div>
+
+    <div v-else-if="paymentResult === 'failed'" class="grid gap-6 lg:grid-cols-[1fr_388px] lg:items-start">
+      <div>
+        <p class="text-[13px] font-semibold uppercase leading-[18px] text-bloom-brass">CHECKOUT FAILED</p>
+        <h1 class="mt-3 text-[42px] font-semibold leading-[52px] text-bloom-green md:text-[48px] md:leading-[65px]">付款未完成</h1>
+        <p class="mt-1 max-w-[620px] text-[18px] leading-8 text-bloom-muted">
+          付款流程尚未完成，請重新確認付款方式或返回購物車調整商品。
+        </p>
+      </div>
+    </div>
+
+    <div v-else class="grid gap-8 lg:grid-cols-[1fr_388px] lg:items-start">
       <div>
         <p class="text-xs font-semibold uppercase tracking-[0.28em] text-bloom-brass">Order Detail</p>
         <h1 class="font-serif-tc mt-4 text-[34px] font-bold leading-[44px] text-bloom-green">訂單詳情</h1>
@@ -22,15 +42,79 @@
     </div>
 
     <template v-else-if="order">
+      <section
+        v-if="paymentResult === 'success'"
+        class="mx-auto mt-14 max-w-[800px] rounded-lg border border-bloom-line/90 bg-bloom-ivory px-8 py-10 shadow-[0_16px_17px_rgba(20,15,8,0.10),0_3px_5px_rgba(20,15,8,0.05)] md:px-12 md:py-14"
+      >
+        <div class="flex flex-col gap-7 md:flex-row md:items-start md:gap-10">
+          <div class="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full bg-bloom-sage text-[34px] font-bold leading-none text-bloom-deep">
+            ✓
+          </div>
+          <div class="min-w-0 flex-1">
+            <h2 class="text-[28px] font-semibold leading-[38px] text-bloom-ink">感謝你的訂購</h2>
+            <p class="mt-2 max-w-[520px] text-[17px] leading-7 text-bloom-muted">
+              訂單編號 #{{ order.order_no }}。你可以回到首頁繼續探索花禮，或查看訂單配送狀態。
+            </p>
+            <div class="mt-8 grid gap-4 sm:grid-cols-2">
+              <a
+                href="/"
+                class="inline-flex h-[54px] items-center justify-center rounded-lg bg-bloom-brass px-8 text-sm font-semibold text-bloom-deep transition-colors hover:bg-[#D4B777]"
+              >
+                回到首頁
+              </a>
+              <a
+                href="#order-detail-panel"
+                class="inline-flex h-[54px] items-center justify-center rounded-lg bg-bloom-green px-8 text-sm font-semibold text-bloom-ivory transition-colors hover:text-bloom-brass"
+              >
+                查看訂單
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        v-else-if="paymentResult === 'failed'"
+        class="mx-auto mt-14 max-w-[800px] rounded-lg border border-bloom-line/90 bg-bloom-ivory px-8 py-10 shadow-[0_16px_17px_rgba(20,15,8,0.10),0_3px_5px_rgba(20,15,8,0.05)] md:px-12 md:py-14"
+      >
+        <div class="flex flex-col gap-7 md:flex-row md:items-start md:gap-10">
+          <div class="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full border border-bloom-brass/50 bg-bloom-blush text-[34px] font-bold leading-none text-bloom-deep">
+            !
+          </div>
+          <div class="min-w-0 flex-1">
+            <h2 class="text-[28px] font-semibold leading-[38px] text-bloom-ink">付款發生問題</h2>
+            <p class="mt-2 max-w-[520px] text-[17px] leading-7 text-bloom-muted">
+              目前沒有扣款完成。請檢查信用卡資訊、網路連線，或改用其他付款方式。
+            </p>
+            <div class="mt-8 grid gap-4 sm:grid-cols-2">
+              <button
+                type="button"
+                @click="handlePayNow"
+                :disabled="paying"
+                class="inline-flex h-[54px] items-center justify-center rounded-lg bg-bloom-brass px-8 text-sm font-semibold text-bloom-deep transition-colors hover:bg-[#D4B777] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {{ paying ? '處理中...' : '重新付款' }}
+              </button>
+              <a
+                href="/cart"
+                class="inline-flex h-[54px] items-center justify-center rounded-lg bg-bloom-green px-8 text-sm font-semibold text-bloom-ivory transition-colors hover:text-bloom-brass"
+              >
+                返回購物車
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div
-        v-if="paymentResult && paymentMessages[paymentResult]"
+        v-if="paymentResult && paymentMessages[paymentResult] && paymentResult !== 'success' && paymentResult !== 'failed'"
         class="mt-10 rounded-lg px-5 py-4 text-sm"
         :class="paymentMessages[paymentResult].cls"
       >
         {{ paymentMessages[paymentResult].text }}
       </div>
 
-      <div class="mt-10 grid gap-10 lg:grid-cols-[760px_440px]">
+      <div id="order-detail-panel" class="mt-10 grid gap-10 lg:grid-cols-[760px_440px]">
         <div class="space-y-8">
           <section class="rounded-lg border border-bloom-line bg-bloom-ivory p-8 shadow-[0_16px_34px_rgba(13,33,28,0.10),0_2px_8px_rgba(21,58,48,0.06)]">
             <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
