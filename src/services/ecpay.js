@@ -1,7 +1,11 @@
 const crypto = require('crypto');
+const https = require('https');
+const querystring = require('querystring');
 
 const STAGE_CHECKOUT_URL = 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5';
 const PRODUCTION_CHECKOUT_URL = 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5';
+const STAGE_QUERY_URL = 'https://payment-stage.ecpay.com.tw/Cashier/QueryTradeInfo/V5';
+const PRODUCTION_QUERY_URL = 'https://payment.ecpay.com.tw/Cashier/QueryTradeInfo/V5';
 const DEFAULT_BASE_URL = 'http://localhost:3001';
 const DEFAULT_STAGE_MERCHANT_ID = '3002607';
 const DEFAULT_STAGE_HASH_KEY = 'pwFHCqoQZGmho4w6';
@@ -32,6 +36,7 @@ function getConfig() {
     hashKey: process.env.ECPAY_HASH_KEY || DEFAULT_STAGE_HASH_KEY,
     hashIv: process.env.ECPAY_HASH_IV || DEFAULT_STAGE_HASH_IV,
     checkoutUrl: env === 'production' ? PRODUCTION_CHECKOUT_URL : STAGE_CHECKOUT_URL,
+    queryUrl: env === 'production' ? PRODUCTION_QUERY_URL : STAGE_QUERY_URL,
     callbackBaseUrl: (process.env.ECPAY_CALLBACK_BASE_URL || process.env.BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, ''),
     clientBaseUrl: (process.env.ECPAY_CLIENT_BACK_BASE_URL || process.env.BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, '')
   };
@@ -143,6 +148,42 @@ function parseOrderResultPayload(body) {
   return body;
 }
 
+function queryTradeInfo(merchantTradeNo, config = getConfig()) {
+  const params = {
+    MerchantID: config.merchantId,
+    MerchantTradeNo: merchantTradeNo,
+    TimeStamp: Math.floor(Date.now() / 1000)
+  };
+  params.CheckMacValue = buildCheckMacValue(params, config);
+
+  const body = querystring.stringify(params);
+  const url = new URL(config.queryUrl);
+
+  return new Promise(function (resolve, reject) {
+    const req = https.request({
+      hostname: url.hostname,
+      path: url.pathname,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    }, function (res) {
+      let data = '';
+      res.on('data', function (chunk) {
+        data += chunk;
+      });
+      res.on('end', function () {
+        resolve(Object.fromEntries(new URLSearchParams(data)));
+      });
+    });
+
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
 module.exports = {
   buildCheckMacValue,
   buildCheckoutParams,
@@ -150,5 +191,6 @@ module.exports = {
   generateMerchantTradeNo,
   getConfig,
   parseOrderResultPayload,
+  queryTradeInfo,
   verifyCheckMacValue
 };

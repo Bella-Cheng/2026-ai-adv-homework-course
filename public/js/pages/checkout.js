@@ -2,13 +2,12 @@ const { createApp, ref, computed, onMounted } = Vue;
 
 createApp({
   setup() {
-    if (!Auth.requireAuth()) return {};
-
     const loading = ref(true);
     const submitting = ref(false);
     const cartItems = ref([]);
     const form = ref({ recipientName: '', recipientEmail: '', recipientAddress: '' });
     const errors = ref({});
+    const isAuthorized = Auth.requireAuth();
 
     const cartTotal = computed(function () {
       return cartItems.value.reduce(function (sum, item) {
@@ -65,6 +64,8 @@ createApp({
     }
 
     onMounted(async function () {
+      if (!isAuthorized) return;
+
       try {
         const res = await apiFetch('/api/cart');
         cartItems.value = res.data.items;

@@ -34,6 +34,10 @@ createApp({
       return paymentStatusMap[status] || status;
     }
 
+    function itemImage(item) {
+      return item && item.product_image_url ? item.product_image_url : '/images/hero-yellow-flowers.jpg';
+    }
+
     function submitEcpayForm(payment) {
       const formEl = document.createElement('form');
       formEl.method = payment.method || 'POST';
@@ -98,6 +102,16 @@ createApp({
       }
     });
 
-    return { order, loading, paying, paymentResult, statusMap, paymentMessages, paymentStatusLabel, handlePayNow };
+    return {
+      order,
+      loading,
+      paying,
+      paymentResult,
+      statusMap,
+      paymentMessages,
+      paymentStatusLabel,
+      itemImage,
+      handlePayNow
+    };
   }
 }).mount('#app');

@@ -9,7 +9,8 @@ describe('Cart API', () => {
   beforeAll(async () => {
     // Get a product id from the product list
     const res = await request(app).get('/api/products');
-    productId = res.body.data.products[0].id;
+    const product = res.body.data.products.find(item => item.stock >= 3);
+    productId = product.id;
   });
 
   it('should add product to cart (guest mode)', async () => {

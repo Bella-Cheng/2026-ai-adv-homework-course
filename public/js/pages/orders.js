@@ -27,6 +27,10 @@ createApp({
       return orderSummaryTexts[index % orderSummaryTexts.length];
     }
 
+    function imageFor(order) {
+      return order && order.product_image_url ? order.product_image_url : '/images/hero-yellow-flowers.jpg';
+    }
+
     onMounted(async function () {
       try {
         const res = await apiFetch('/api/orders');
@@ -38,6 +42,6 @@ createApp({
       }
     });
 
-    return { orders, loading, statusMap, orderCount, orderSummaryText };
+    return { orders, loading, statusMap, orderCount, orderSummaryText, imageFor };
   }
 }).mount('#app');

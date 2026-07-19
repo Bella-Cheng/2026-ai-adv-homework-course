@@ -33,6 +33,42 @@ describe('Auth API', () => {
     expect(res.body.error).not.toBeNull();
   });
 
+  it('should sync guest cart into member cart after registration', async () => {
+    const sessionId = `register-cart-${Date.now()}`;
+    const productsRes = await request(app).get('/api/products');
+    const product = productsRes.body.data.products.find(item => item.stock >= 2);
+    const productId = product.id;
+
+    const guestCartRes = await request(app)
+      .post('/api/cart')
+      .set('X-Session-Id', sessionId)
+      .send({ productId, quantity: 2 });
+
+    expect(guestCartRes.status).toBe(200);
+
+    const registerRes = await request(app)
+      .post('/api/auth/register')
+      .set('X-Session-Id', sessionId)
+      .send({
+        email: `cart-sync-${Date.now()}@example.com`,
+        password: 'password123',
+        name: 'Cart Sync User'
+      });
+
+    expect(registerRes.status).toBe(201);
+
+    const memberCartRes = await request(app)
+      .get('/api/cart')
+      .set('Authorization', `Bearer ${registerRes.body.data.token}`);
+
+    expect(memberCartRes.status).toBe(200);
+    expect(memberCartRes.body.data.items).toHaveLength(1);
+    expect(memberCartRes.body.data.items[0]).toMatchObject({
+      product_id: productId,
+      quantity: 2
+    });
+  });
+
   it('should login successfully', async () => {
     const res = await request(app)
       .post('/api/auth/login')
@@ -44,6 +80,43 @@ describe('Auth API', () => {
     expect(res.body).toHaveProperty('message');
     expect(res.body.data).toHaveProperty('token');
     expect(res.body.data.user).toHaveProperty('email', 'admin@hexschool.com');
+  });
+
+  it('should sync guest cart into member cart after login', async () => {
+    const email = `login-cart-sync-${Date.now()}@example.com`;
+    await request(app)
+      .post('/api/auth/register')
+      .send({ email, password: 'password123', name: 'Login Cart Sync User' });
+
+    const sessionId = `login-cart-${Date.now()}`;
+    const productsRes = await request(app).get('/api/products');
+    const product = productsRes.body.data.products.find(item => item.stock >= 1);
+    const productId = product.id;
+
+    const guestCartRes = await request(app)
+      .post('/api/cart')
+      .set('X-Session-Id', sessionId)
+      .send({ productId, quantity: 1 });
+
+    expect(guestCartRes.status).toBe(200);
+
+    const loginRes = await request(app)
+      .post('/api/auth/login')
+      .set('X-Session-Id', sessionId)
+      .send({ email, password: 'password123' });
+
+    expect(loginRes.status).toBe(200);
+
+    const memberCartRes = await request(app)
+      .get('/api/cart')
+      .set('Authorization', `Bearer ${loginRes.body.data.token}`);
+
+    expect(memberCartRes.status).toBe(200);
+    expect(memberCartRes.body.data.items).toHaveLength(1);
+    expect(memberCartRes.body.data.items[0]).toMatchObject({
+      product_id: productId,
+      quantity: 1
+    });
   });
 
   it('should fail login with wrong password', async () => {

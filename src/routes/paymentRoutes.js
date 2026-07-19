@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('../database');
-const { parseOrderResultPayload, verifyCheckMacValue } = require('../services/ecpay');
+const { parseOrderResultPayload, queryTradeInfo, verifyCheckMacValue } = require('../services/ecpay');
 
 const router = express.Router();
 
@@ -74,7 +74,7 @@ router.post('/ecpay/return', (req, res) => {
   return res.type('text/plain').send('1|OK');
 });
 
-router.post('/ecpay/result', (req, res) => {
+router.post('/ecpay/result', async (req, res) => {
   const payload = parseOrderResultPayload(req.body);
   const merchantTradeNo = payload.MerchantTradeNo;
   const order = merchantTradeNo ? getOrderByMerchantTradeNo(merchantTradeNo) : null;
@@ -82,10 +82,41 @@ router.post('/ecpay/result', (req, res) => {
   const redirectPath = order ? '/orders/' + order.id : '/orders';
   let paymentResult = 'failed';
 
-  if (String(payload.RtnCode) === '1' || String(payload.TradeStatus) === '1') {
+  if (!order) {
+    return res.redirect(302, clientBaseUrl + redirectPath + '?payment=' + encodeURIComponent(paymentResult));
+  }
+
+  if (order.payment_status === 'paid') {
     paymentResult = 'success';
-  } else if (payload.RtnMsg && String(payload.RtnMsg).toLowerCase().includes('cancel')) {
-    paymentResult = 'cancel';
+  } else if (order.payment_status === 'failed') {
+    paymentResult = 'failed';
+  } else {
+    try {
+      const tradeInfo = await queryTradeInfo(merchantTradeNo);
+      const isPaid = String(tradeInfo.TradeStatus) === '1';
+
+      if (isPaid) {
+        updatePaidOrder(order, {
+          ...payload,
+          PaymentType: tradeInfo.PaymentType || payload.PaymentType,
+          TradeNo: tradeInfo.TradeNo || payload.TradeNo,
+          PaymentDate: tradeInfo.PaymentDate || payload.PaymentDate,
+          TradeInfo: tradeInfo
+        });
+        paymentResult = 'success';
+      } else if (payload.RtnMsg && String(payload.RtnMsg).toLowerCase().includes('cancel')) {
+        paymentResult = 'cancel';
+      } else {
+        updateFailedOrder(order, {
+          ...payload,
+          TradeInfo: tradeInfo
+        });
+      }
+    } catch (err) {
+      if (String(payload.RtnCode) === '1' || String(payload.TradeStatus) === '1') {
+        paymentResult = 'success';
+      }
+    }
   }
 
   res.redirect(302, clientBaseUrl + redirectPath + '?payment=' + encodeURIComponent(paymentResult));

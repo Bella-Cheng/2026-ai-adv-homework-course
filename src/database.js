@@ -32,6 +32,7 @@ function migrateSchema() {
   addColumnIfMissing('orders', 'ecpay_trade_no', 'TEXT');
   addColumnIfMissing('orders', 'payment_at', 'TEXT');
   addColumnIfMissing('orders', 'payment_raw_payload', 'TEXT');
+  addColumnIfMissing('order_items', 'product_image_url', 'TEXT');
 
   db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_merchant_trade_no ON orders(merchant_trade_no)');
 }
@@ -97,6 +98,7 @@ function initializeDatabase() {
       product_id TEXT NOT NULL,
       product_name TEXT NOT NULL,
       product_price INTEGER NOT NULL,
+      product_image_url TEXT,
       quantity INTEGER NOT NULL,
       FOREIGN KEY (order_id) REFERENCES orders(id)
     );

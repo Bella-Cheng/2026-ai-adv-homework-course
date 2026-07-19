@@ -45,11 +45,20 @@ createApp({
       try {
         const res = await apiFetch('/api/cart');
         items.value = res.data.items;
+        updateCartBadge();
       } catch (e) {
         Notification.show('載入購物車失敗', 'error');
       } finally {
         loading.value = false;
       }
+    }
+
+    function updateCartBadge() {
+      var badge = document.getElementById('cart-badge');
+      if (!badge) return;
+
+      badge.textContent = items.value.length;
+      badge.style.display = items.value.length > 0 ? 'flex' : 'none';
     }
 
     async function updateQuantity(itemId, qty) {
@@ -72,10 +81,12 @@ createApp({
     }
 
     async function handleDelete() {
+      const itemId = deleteItemId.value;
       confirmVisible.value = false;
       try {
-        await apiFetch('/api/cart/' + deleteItemId.value, { method: 'DELETE' });
-        items.value = items.value.filter(function (i) { return i.id !== deleteItemId.value; });
+        await apiFetch('/api/cart/' + itemId, { method: 'DELETE' });
+        await loadCart();
+        deleteItemId.value = '';
         Notification.show('已從購物車移除', 'success');
       } catch (e) {
         Notification.show('移除失敗', 'error');

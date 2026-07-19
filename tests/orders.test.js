@@ -7,6 +7,7 @@ describe('Orders API', () => {
   let orderId;
   let merchantTradeNo;
   let orderTotalAmount;
+  let productImageUrl;
 
   it('should match the official AioCheckOut CheckMacValue example', () => {
     const value = buildCheckMacValue({
@@ -80,7 +81,9 @@ describe('Orders API', () => {
     userToken = token;
 
     const prodRes = await request(app).get('/api/products');
-    productId = prodRes.body.data.products[0].id;
+    const product = prodRes.body.data.products.find(item => item.stock >= 1);
+    productId = product.id;
+    productImageUrl = product.image_url;
 
     await request(app)
       .post('/api/cart')
@@ -104,6 +107,7 @@ describe('Orders API', () => {
     expect(res.body.data).toHaveProperty('status', 'pending');
     expect(res.body.data).toHaveProperty('payment_status', 'pending');
     expect(res.body.data).toHaveProperty('payment');
+    expect(res.body.data.items[0]).toHaveProperty('product_image_url', productImageUrl);
     expect(res.body.data.payment).toHaveProperty('action');
     expect(res.body.data.payment.fields).toHaveProperty('ChoosePayment', 'Credit');
     expect(res.body.data.payment.fields).toHaveProperty('MerchantTradeNo');
@@ -165,6 +169,7 @@ describe('Orders API', () => {
     expect(Array.isArray(res.body.data.orders)).toBe(true);
     expect(res.body.data.orders.length).toBeGreaterThan(0);
     expect(res.body.data.orders[0]).toHaveProperty('payment_status');
+    expect(res.body.data.orders[0]).toHaveProperty('product_image_url', productImageUrl);
   });
 
   it('should get order detail with payment fields', async () => {
@@ -177,6 +182,7 @@ describe('Orders API', () => {
     expect(res.body.data).toHaveProperty('merchant_trade_no', merchantTradeNo);
     expect(res.body.data).toHaveProperty('payment_provider', 'ecpay');
     expect(Array.isArray(res.body.data.items)).toBe(true);
+    expect(res.body.data.items[0]).toHaveProperty('product_image_url', productImageUrl);
   });
 
   it('should update order status after valid ecpay callback', async () => {
