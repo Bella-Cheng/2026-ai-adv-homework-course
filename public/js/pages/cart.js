@@ -6,6 +6,15 @@ createApp({
     const loading = ref(true);
     const confirmVisible = ref(false);
     const deleteItemId = ref('');
+    const fallbackImage = '/images/hero-yellow-flowers.jpg';
+    const productSubtitles = [
+      'Pink Rose Bouquet',
+      'White Lily Gift Box',
+      'Monthly Flower Subscription',
+      'Summer Floral Gift',
+      'Seasonal Bouquet'
+    ];
+    const productChips = ['本季熱賣', '夏日花禮', '當季限定'];
 
     const total = computed(function () {
       return items.value.reduce(function (sum, item) {
@@ -13,16 +22,43 @@ createApp({
       }, 0);
     });
 
+    const itemCount = computed(function () {
+      return items.value.reduce(function (sum, item) {
+        return sum + item.quantity;
+      }, 0);
+    });
+
+    const shippingFee = computed(function () {
+      return total.value >= 500 ? 0 : 150;
+    });
+
+    const discount = computed(function () {
+      return total.value >= 3000 ? 200 : 0;
+    });
+
+    const finalTotal = computed(function () {
+      return total.value + shippingFee.value - discount.value;
+    });
+
     async function loadCart() {
       loading.value = true;
       try {
         const res = await apiFetch('/api/cart');
         items.value = res.data.items;
+        updateCartBadge();
       } catch (e) {
         Notification.show('載入購物車失敗', 'error');
       } finally {
         loading.value = false;
       }
+    }
+
+    function updateCartBadge() {
+      var badge = document.getElementById('cart-badge');
+      if (!badge) return;
+
+      badge.textContent = items.value.length;
+      badge.style.display = items.value.length > 0 ? 'flex' : 'none';
     }
 
     async function updateQuantity(itemId, qty) {
@@ -45,10 +81,12 @@ createApp({
     }
 
     async function handleDelete() {
+      const itemId = deleteItemId.value;
       confirmVisible.value = false;
       try {
-        await apiFetch('/api/cart/' + deleteItemId.value, { method: 'DELETE' });
-        items.value = items.value.filter(function (i) { return i.id !== deleteItemId.value; });
+        await apiFetch('/api/cart/' + itemId, { method: 'DELETE' });
+        await loadCart();
+        deleteItemId.value = '';
         Notification.show('已從購物車移除', 'success');
       } catch (e) {
         Notification.show('移除失敗', 'error');
@@ -63,13 +101,31 @@ createApp({
       window.location.href = '/checkout';
     }
 
+    function imageFor(product) {
+      return product && product.image_url ? product.image_url : fallbackImage;
+    }
+
+    function productSubtitle(product, index) {
+      if (product && product.description) {
+        return product.description.length > 28
+          ? product.description.slice(0, 28) + '...'
+          : product.description;
+      }
+      return productSubtitles[index % productSubtitles.length];
+    }
+
+    function productChip(index) {
+      return productChips[index % productChips.length];
+    }
+
     onMounted(function () {
       loadCart();
     });
 
     return {
-      items, loading, total, confirmVisible,
-      updateQuantity, confirmDelete, handleDelete, goCheckout
+      items, loading, total, itemCount, shippingFee, discount, finalTotal, confirmVisible,
+      updateQuantity, confirmDelete, handleDelete, goCheckout,
+      imageFor, productSubtitle, productChip
     };
   }
 }).mount('#app');

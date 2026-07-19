@@ -16,7 +16,27 @@ function generateOrderNo() {
 }
 
 function getOrderItems(orderId) {
-  return db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(orderId);
+  return db.prepare(
+    `SELECT oi.id, oi.order_id, oi.product_id, oi.product_name, oi.product_price,
+            COALESCE(oi.product_image_url, p.image_url) as product_image_url,
+            oi.quantity
+     FROM order_items oi
+     LEFT JOIN products p ON oi.product_id = p.id
+     WHERE oi.order_id = ?`
+  ).all(orderId);
+}
+
+function getOrderCoverImage(orderId) {
+  const item = db.prepare(
+    `SELECT COALESCE(oi.product_image_url, p.image_url) as image_url
+     FROM order_items oi
+     LEFT JOIN products p ON oi.product_id = p.id
+     WHERE oi.order_id = ?
+     ORDER BY oi.rowid ASC
+     LIMIT 1`
+  ).get(orderId);
+
+  return item ? item.image_url : null;
 }
 
 function serializeOrder(order) {
@@ -113,7 +133,8 @@ router.post('/', (req, res) => {
   // Get cart items with product info
   const cartItems = db.prepare(
     `SELECT ci.id, ci.product_id, ci.quantity,
-            p.name as product_name, p.price as product_price, p.stock as product_stock
+            p.name as product_name, p.price as product_price,
+            p.image_url as product_image_url, p.stock as product_stock
      FROM cart_items ci
      JOIN products p ON ci.product_id = p.id
      WHERE ci.user_id = ?`
@@ -169,14 +190,22 @@ router.post('/', (req, res) => {
     );
 
     const insertItem = db.prepare(
-      `INSERT INTO order_items (id, order_id, product_id, product_name, product_price, quantity)
-       VALUES (?, ?, ?, ?, ?, ?)`
+      `INSERT INTO order_items (id, order_id, product_id, product_name, product_price, product_image_url, quantity)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
     );
 
     const updateStock = db.prepare('UPDATE products SET stock = stock - ? WHERE id = ?');
 
     for (const item of cartItems) {
-      insertItem.run(uuidv4(), orderId, item.product_id, item.product_name, item.product_price, item.quantity);
+      insertItem.run(
+        uuidv4(),
+        orderId,
+        item.product_id,
+        item.product_name,
+        item.product_price,
+        item.product_image_url,
+        item.quantity
+      );
       updateStock.run(item.quantity, item.product_id);
     }
 
@@ -187,7 +216,7 @@ router.post('/', (req, res) => {
 
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
   const orderItems = db.prepare(
-    'SELECT product_name, product_price, quantity FROM order_items WHERE order_id = ?'
+    'SELECT product_name, product_price, product_image_url, quantity FROM order_items WHERE order_id = ?'
   ).all(orderId);
   const payment = buildCheckoutParams(order, getOrderItems(orderId));
 
@@ -252,9 +281,15 @@ router.get('/', (req, res) => {
   const orders = db.prepare(
     'SELECT id, order_no, total_amount, status, payment_status, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC'
   ).all(req.user.userId);
+  const ordersWithImages = orders.map(function (order) {
+    return {
+      ...order,
+      product_image_url: getOrderCoverImage(order.id)
+    };
+  });
 
   res.json({
-    data: { orders },
+    data: { orders: ordersWithImages },
     error: null,
     message: '成功'
   });

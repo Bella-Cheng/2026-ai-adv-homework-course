@@ -12,17 +12,31 @@ createApp({
     const paying = ref(false);
 
     const statusMap = {
-      pending: { label: '待付款', cls: 'bg-apricot/20 text-apricot' },
-      paid: { label: '已付款', cls: 'bg-sage/20 text-sage' },
-      failed: { label: '付款失敗', cls: 'bg-red-100 text-red-600' }
+      pending: { label: '待付款', cls: 'bg-bloom-brass/20 text-bloom-deep' },
+      paid: { label: '已付款', cls: 'bg-bloom-sage/20 text-bloom-green' },
+      failed: { label: '付款失敗', cls: 'bg-bloom-blush/20 text-bloom-deep' }
     };
 
     const paymentMessages = {
-      success: { text: '付款已送出，系統正在確認結果。', cls: 'bg-sage/10 text-sage border border-sage/20' },
-      failed: { text: '付款失敗，請重新嘗試。', cls: 'bg-red-50 text-red-600 border border-red-100' },
-      cancel: { text: '付款已取消。', cls: 'bg-apricot/10 text-apricot border border-apricot/20' },
-      processing: { text: '付款結果回寫中，請稍候重新整理。', cls: 'bg-apricot/10 text-apricot border border-apricot/20' }
+      success: { text: '付款已送出，系統正在確認結果。', cls: 'border border-bloom-sage/30 bg-bloom-sage/10 text-bloom-green' },
+      failed: { text: '付款失敗，請重新嘗試。', cls: 'border border-bloom-brass/40 bg-bloom-blush/30 text-bloom-deep' },
+      cancel: { text: '付款已取消。', cls: 'border border-bloom-brass/30 bg-bloom-brass/10 text-bloom-deep' },
+      processing: { text: '付款結果回寫中，請稍候重新整理。', cls: 'border border-bloom-brass/30 bg-bloom-brass/10 text-bloom-deep' }
     };
+
+    const paymentStatusMap = {
+      pending: '待付款',
+      paid: '已付款',
+      failed: '付款失敗'
+    };
+
+    function paymentStatusLabel(status) {
+      return paymentStatusMap[status] || status;
+    }
+
+    function itemImage(item) {
+      return item && item.product_image_url ? item.product_image_url : '/images/hero-yellow-flowers.jpg';
+    }
 
     function submitEcpayForm(payment) {
       const formEl = document.createElement('form');
@@ -88,6 +102,16 @@ createApp({
       }
     });
 
-    return { order, loading, paying, paymentResult, statusMap, paymentMessages, handlePayNow };
+    return {
+      order,
+      loading,
+      paying,
+      paymentResult,
+      statusMap,
+      paymentMessages,
+      paymentStatusLabel,
+      itemImage,
+      handlePayNow
+    };
   }
 }).mount('#app');

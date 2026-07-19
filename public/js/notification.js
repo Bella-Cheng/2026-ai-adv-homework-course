@@ -6,13 +6,13 @@ const Notification = {
     if (!el) return;
 
     const colors = {
-      success: 'bg-sage text-white',
-      error: 'bg-red-500 text-white',
-      warning: 'bg-apricot text-white',
-      info: 'bg-gray-700 text-white'
+      success: 'border-2 border-bloom-brass bg-bloom-ivory text-bloom-green',
+      error: 'border-2 border-bloom-brass bg-bloom-ivory text-bloom-green',
+      warning: 'border-2 border-bloom-brass bg-bloom-ivory text-bloom-green',
+      info: 'border-2 border-bloom-brass bg-bloom-ivory text-bloom-green'
     };
 
-    el.className = 'fixed top-20 right-4 z-[100] px-5 py-3 rounded-xl shadow-lg text-sm transition-all duration-300 ' + (colors[type] || colors.info);
+    el.className = 'fixed left-1/2 top-[126px] z-[100] max-w-[calc(100vw-48px)] -translate-x-1/2 rounded-lg px-6 py-4 text-center text-sm font-medium shadow-[0_18px_38px_rgba(13,33,28,0.18)] transition-all duration-300 ' + (colors[type] || colors.info);
     el.textContent = message;
     el.style.display = 'block';
     el.style.opacity = '1';

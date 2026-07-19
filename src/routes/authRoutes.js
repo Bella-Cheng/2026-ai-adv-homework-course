@@ -7,6 +7,29 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
+function mergeGuestCartIntoUser(sessionId, userId) {
+  if (!sessionId) return;
+
+  const guestItems = db.prepare(
+    'SELECT id, product_id, quantity FROM cart_items WHERE session_id = ?'
+  ).all(sessionId);
+
+  for (const item of guestItems) {
+    const userItem = db.prepare(
+      'SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ?'
+    ).get(userId, item.product_id);
+
+    if (userItem) {
+      db.prepare('UPDATE cart_items SET quantity = ? WHERE id = ?')
+        .run(userItem.quantity + item.quantity, userItem.id);
+      db.prepare('DELETE FROM cart_items WHERE id = ?').run(item.id);
+    } else {
+      db.prepare('UPDATE cart_items SET user_id = ?, session_id = NULL WHERE id = ?')
+        .run(userId, item.id);
+    }
+  }
+}
+
 /**
  * @openapi
  * /api/auth/register:
@@ -103,11 +126,17 @@ router.post('/register', (req, res) => {
   const id = uuidv4();
   const passwordHash = bcrypt.hashSync(password, 10);
 
-  db.prepare(
-    'INSERT INTO users (id, email, password_hash, name, role) VALUES (?, ?, ?, ?, ?)'
-  ).run(id, email, passwordHash, name, 'user');
+  const createUser = db.transaction(function () {
+    db.prepare(
+      'INSERT INTO users (id, email, password_hash, name, role) VALUES (?, ?, ?, ?, ?)'
+    ).run(id, email, passwordHash, name, 'user');
 
-  const user = db.prepare('SELECT id, email, name, role, created_at FROM users WHERE id = ?').get(id);
+    mergeGuestCartIntoUser(req.sessionId, id);
+
+    return db.prepare('SELECT id, email, name, role, created_at FROM users WHERE id = ?').get(id);
+  });
+
+  const user = createUser();
 
   const token = jwt.sign(
     { userId: user.id, email: user.email, role: user.role },
@@ -205,6 +234,12 @@ router.post('/login', (req, res) => {
       error: 'UNAUTHORIZED',
       message: 'Email 或密碼錯誤'
     });
+  }
+
+  if (req.sessionId) {
+    db.transaction(function () {
+      mergeGuestCartIntoUser(req.sessionId, user.id);
+    })();
   }
 
   const token = jwt.sign(

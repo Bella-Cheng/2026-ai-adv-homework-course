@@ -1,11 +1,21 @@
-<header class="sticky top-0 z-50 bg-gray-900 text-white shadow-sm">
-  <div class="flex items-center justify-between px-6 h-16">
-    <span class="font-bold text-lg" style="font-family: 'Noto Serif TC', serif;">花漾生活</span>
-    <div id="admin-auth-nav" class="flex items-center gap-4 text-sm">
-      <a href="/" class="text-gray-300 hover:text-white">返回前台</a>
-      <span class="text-gray-600">|</span>
-      <span class="text-gray-400" id="admin-username"></span>
-      <button onclick="Auth.logout()" class="text-gray-300 hover:text-white">登出</button>
+<header class="sticky top-0 z-50">
+  <div class="h-9 bg-bloom-deep text-bloom-ivory">
+    <div class="mx-auto flex h-full max-w-[1440px] items-center justify-between gap-4 px-4 text-[11px] sm:px-6 md:px-10">
+      <p class="min-w-0 truncate">花漾生活｜當季花束營運後台</p>
+      <p class="hidden text-bloom-brass md:block">目前季節：夏季花束　|　下季預購：秋季花禮</p>
+    </div>
+  </div>
+  <div class="h-[74px] bg-bloom-green text-bloom-ivory">
+    <div class="mx-auto flex h-full max-w-[1440px] items-center justify-between gap-4 px-4 sm:px-6 md:px-10">
+      <a href="/admin/products" class="shrink-0">
+        <span class="font-serif-tc block text-[20px] font-semibold leading-none sm:text-[24px]">花漾生活</span>
+        <span class="mt-2 hidden text-[11px] text-bloom-sage sm:block">Floral Studio</span>
+      </a>
+      <div id="admin-auth-nav" class="flex min-w-0 items-center justify-end gap-3 text-xs font-medium sm:gap-5 sm:text-sm">
+        <a href="/" class="text-bloom-brass transition-colors hover:text-bloom-ivory">返回前台</a>
+        <span class="hidden text-bloom-ivory sm:inline" id="admin-username"></span>
+        <button onclick="Auth.logout()" class="text-bloom-ivory transition-colors hover:text-bloom-brass">登出</button>
+      </div>
     </div>
   </div>
 </header>

@@ -1,4 +1,4 @@
-const { createApp, ref, watch, onMounted } = Vue;
+const { createApp, ref, computed, watch, onMounted } = Vue;
 
 createApp({
   setup() {
@@ -12,10 +12,36 @@ createApp({
     const detailLoading = ref(false);
 
     const statusMap = {
-      pending: { label: '待付款', cls: 'bg-yellow-100 text-yellow-800' },
-      paid: { label: '已付款', cls: 'bg-green-100 text-green-800' },
-      failed: { label: '付款失敗', cls: 'bg-red-100 text-red-800' },
+      pending: { label: '待付款', cls: 'bg-bloom-photo' },
+      paid: { label: '已付款', cls: 'bg-bloom-sage' },
+      failed: { label: '付款失敗', cls: 'bg-bloom-blush' },
     };
+
+    const pendingCount = computed(function () {
+      return orders.value.filter(function (order) {
+        return order.status === 'pending';
+      }).length;
+    });
+
+    const paidCount = computed(function () {
+      return orders.value.filter(function (order) {
+        return order.status === 'paid';
+      }).length;
+    });
+
+    const failedCount = computed(function () {
+      return orders.value.filter(function (order) {
+        return order.status === 'failed';
+      }).length;
+    });
+
+    const revenueText = computed(function () {
+      const total = orders.value.reduce(function (sum, order) {
+        return sum + order.total_amount;
+      }, 0);
+      if (total >= 1000) return Math.round(total / 1000) + 'K';
+      return String(total);
+    });
 
     async function loadOrders(page) {
       page = page || 1;
@@ -58,7 +84,8 @@ createApp({
     return {
       orders, pagination, loading, statusFilter,
       detailVisible, detailOrder, detailLoading,
-      statusMap, loadOrders, viewDetail
+      statusMap, pendingCount, paidCount, failedCount, revenueText,
+      loadOrders, viewDetail
     };
   }
 }).mount('#app');

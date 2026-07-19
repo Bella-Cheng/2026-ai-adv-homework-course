@@ -1,4 +1,4 @@
-const { createApp, ref, onMounted } = Vue;
+const { createApp, ref, computed, onMounted } = Vue;
 
 createApp({
   setup() {
@@ -8,10 +8,28 @@ createApp({
     const loading = ref(true);
 
     const statusMap = {
-      pending: { label: '待付款', cls: 'bg-apricot/20 text-apricot' },
-      paid: { label: '已付款', cls: 'bg-sage/20 text-sage' },
-      failed: { label: '付款失敗', cls: 'bg-red-100 text-red-600' },
+      pending: { label: '待付款', cls: 'border border-bloom-line bg-bloom-cream text-bloom-muted' },
+      paid: { label: '已付款', cls: 'border border-bloom-line bg-bloom-cream text-bloom-muted' },
+      failed: { label: '付款失敗', cls: 'border border-bloom-line bg-bloom-cream text-bloom-muted' },
     };
+
+    const orderCount = computed(function () {
+      return orders.value.length;
+    });
+
+    const orderSummaryTexts = [
+      '本季花束訂單，請確認付款狀態。',
+      '花禮配送安排中，可查看訂單詳情。',
+      '付款未完成時，可重新前往付款。'
+    ];
+
+    function orderSummaryText(index) {
+      return orderSummaryTexts[index % orderSummaryTexts.length];
+    }
+
+    function imageFor(order) {
+      return order && order.product_image_url ? order.product_image_url : '/images/hero-yellow-flowers.jpg';
+    }
 
     onMounted(async function () {
       try {
@@ -24,6 +42,6 @@ createApp({
       }
     });
 
-    return { orders, loading, statusMap };
+    return { orders, loading, statusMap, orderCount, orderSummaryText, imageFor };
   }
 }).mount('#app');
